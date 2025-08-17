@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
+
+    <!-- 获取日志文件的输出路径 -->
+<!--    <property scope="context" name="LOG_PATH" value="/www/wwwroot/log"/>-->
+    <property scope="context" name="LOG_PATH" value="/Users/local/log"/>
+    <!-- 获取该应用的名称 -->
+    <property scope="context" name="APPLICATION_NAME" value="nengdian"/>
+
+    <!-- 定义日志输出格式和颜色 -->
+    <property name="LOG_FORMAT_ONE" value="%red(%d{yyyy-MM-dd HH:mm:ss.SSS}) %green([%thread]) %blue([%-5level]) %cyan(%logger{36}:%line) %msg%n" />
+    <property name="LOG_FORMAT_TWO" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{36}:%line %msg%n" />
+
+    <!-- 输出到控制台 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 日志输出编码格式化 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${LOG_FORMAT_ONE}</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 过滤器，此过滤器低于阈值的不再显示 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+    </appender>
+
+    <!-- 时间日期滚动日志 -->
+    <appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 输出的日志远程，当天的日志名称 -->
+        <file>${LOG_PATH}/${APPLICATION_NAME}/info.log</file>
+        <!-- 策略配置 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 保存归纳的日志 -->
+            <fileNamePattern>${LOG_PATH}/${APPLICATION_NAME}/%d{yyyy-MM-dd}/info_%i.log</fileNamePattern>
+            <!-- 日志文件最大尺寸 -->
+            <maxFileSize>10MB</maxFileSize>
+            <!--日志文件保留天数-->
+            <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+        <!-- 日志输出编码格式化 -->
+        <encoder>
+            <pattern>${LOG_FORMAT_TWO}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 时间日期滚动日志，只记录error级别的日志 -->
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPLICATION_NAME}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APPLICATION_NAME}/%d{yyyy-MM-dd}/error.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_FORMAT_TWO}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 过滤器，日志级别过滤，仅输出error日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 时间日期滚动日志 -->
+    <appender name="FILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 输出的日志远程，当天的日志名称 -->
+        <file>${LOG_PATH}/${APPLICATION_NAME}/warn.log</file>
+        <!-- 策略配置 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 保存归纳的日志 -->
+            <fileNamePattern>${LOG_PATH}/${APPLICATION_NAME}/%d{yyyy-MM-dd}/warn_%i.log</fileNamePattern>
+            <!-- 日志文件最大尺寸 -->
+            <maxFileSize>10MB</maxFileSize>
+            <!--日志文件保留天数-->
+            <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+        <!-- 日志输出编码格式化 -->
+        <encoder>
+            <pattern>${LOG_FORMAT_TWO}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 指定输出的日志等级，root代表工程所有包 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_INFO" />
+        <appender-ref ref="FILE_ERROR" />
+        <appender-ref ref="FILE_WARN" />
+    </root>
+
+    <!-- 指定输出的日志等级，指定包路径，此包下都以设置的等级输出 -->
+    <!-- additivity表示日志是否向上传递，如果为true，日志在root可能会再次打印 -->
+    <logger name="com.banmoon.spring_boot_logger.mapper" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_INFO" />
+        <appender-ref ref="FILE_ERROR" />
+        <appender-ref ref="FILE_WARN" />
+    </logger>
+
+</configuration>
