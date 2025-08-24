@@ -2,8 +2,8 @@
 <configuration scan="true" scanPeriod="30 seconds" debug="true">
 
     <!-- 获取日志文件的输出路径 -->
-<!--    <property scope="context" name="LOG_PATH" value="/www/wwwroot/log"/>-->
-    <property scope="context" name="LOG_PATH" value="/Users/local/log"/>
+    <property scope="context" name="LOG_PATH" value="/www/wwwroot/log"/>
+<!--    <property scope="context" name="LOG_PATH" value="/Users/local/log"/>-->
     <!-- 获取该应用的名称 -->
     <property scope="context" name="APPLICATION_NAME" value="nengdian"/>
 

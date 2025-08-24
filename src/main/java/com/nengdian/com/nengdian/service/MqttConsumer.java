@@ -2,6 +2,7 @@ package com.nengdian.com.nengdian.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nengdian.com.nengdian.bo.RecordBO;
+import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.dao.DeviceRepository;
 import com.nengdian.com.nengdian.dao.NotifyRecordRepository;
@@ -48,7 +49,7 @@ public class MqttConsumer {
             String devId = topic.split("/")[0];
             recordRepository.save(buildRecord(recordBO, devId));
 
-            if (recordBO.getStatus() == 1 || recordBO.getStatus() == 3) {
+            if (recordBO.getWS() == LiquidStatusEnum.Low.getCode() || recordBO.getWS() == LiquidStatusEnum.Height.getCode()) {
                 Device device = deviceRepository.findByDevId(devId);
                 if (Objects.isNull(device)) {
                     logger.error("设备采集数据报警，未找到设备详情，devId:{}", devId);
@@ -71,12 +72,8 @@ public class MqttConsumer {
         DeviceRecord record = new DeviceRecord();
         record.setDevId(devId);
         record.setLiquidHeight((int) (recordBO.getX() * 100));
-        record.setLiquidPercent((int) (recordBO.getPt() * 100));
-        // todo 处理测试采集数据
-        record.setLiquidStatus(recordBO.getStatus());
-        if (recordBO.getStatus() == 0) {
-            record.setLiquidStatus(2);
-        }
+        record.setLiquidPercent((int) (recordBO.getWater() * 100));
+        record.setLiquidStatus(recordBO.getWS());
         record.setCreateTime(LocalDateTime.now());
         return record;
     }

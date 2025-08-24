@@ -23,7 +23,7 @@ CREATE TABLE `device_record` (
 `dev_id` varchar(64) NOT NULL COMMENT '设备编码',
 `liquid_height` int DEFAULT NULL COMMENT '液位高度',
 `liquid_percent` int DEFAULT NULL COMMENT '液位百分比',
-`liquid_status` tinyint(1) NOT NULL COMMENT '液位状态 1：低液位 2：正常 3：高液位',
+`liquid_status` tinyint(1) NOT NULL COMMENT '液位状态 0 正常， 1，低液位报警， 2，高液位报警',
 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
 PRIMARY KEY (`id`),
 INDEX idx_dev_id_create_time(`dev_id`,`create_time`)
