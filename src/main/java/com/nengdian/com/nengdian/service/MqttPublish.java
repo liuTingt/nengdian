@@ -37,7 +37,10 @@ public class MqttPublish {
         instruction.setSM(request.isLowEnergySwitch());
         instruction.setI(request.getInstallHeight());
         instruction.setF(request.getDistance());
-//        instruction.setPump(0);
+        instruction.setPump(0);
+        if (request.isDrainageModel()) {
+            instruction.setPump(1);
+        }
 //        instruction.setSize(0);
 //        instruction.setL(0.0D);
 //        instruction.setW(0.0D);
