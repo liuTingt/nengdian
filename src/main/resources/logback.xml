@@ -42,6 +42,12 @@
             <pattern>${LOG_FORMAT_TWO}</pattern>
             <charset>UTF-8</charset>
         </encoder>
+        <!-- 过滤器，日志级别过滤，仅输出info日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
     <!-- 时间日期滚动日志，只记录error级别的日志 -->
@@ -82,6 +88,12 @@
             <pattern>${LOG_FORMAT_TWO}</pattern>
             <charset>UTF-8</charset>
         </encoder>
+        <!-- 过滤器，日志级别过滤，仅输出info日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
     <!-- 指定输出的日志等级，root代表工程所有包 -->
