@@ -1,21 +1,18 @@
 package com.nengdian.com.nengdian.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.nengdian.com.nengdian.bo.AccessTokenRes;
 import com.nengdian.com.nengdian.bo.SendMessage;
 import com.nengdian.com.nengdian.bo.WechatLoginRep;
 import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.HttpUtil;
 import com.nengdian.com.nengdian.common.ResultCodeEnum;
-import com.nengdian.com.nengdian.common.WechatConstant;
 import com.nengdian.com.nengdian.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -27,6 +24,12 @@ public class WechatService {
     private static final String message_url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=%s";
     private static final String appid = "wx0b1b04d5b707e870";
     private static final String app_secret = "8b7f4357479552d7944fdb7de07fcbb3";
+
+    // 服务号appid、secret
+    private static final String service_appid = "wx0b1b04d5b707e870";
+    private static final String service_app_secret = "8b7f4357479552d7944fdb7de07fcbb3";
+
+
     @Resource
     private HttpUtil httpUtil;
     @Resource
@@ -51,7 +54,7 @@ public class WechatService {
 
     public String getAccessToken() {
         try {
-            String url = String.format(access_token_url, appid, app_secret);
+            String url = String.format(access_token_url, service_appid, service_app_secret);
             AccessTokenRes response = httpUtil.doGet(url, AccessTokenRes.class);
             logger.info("获取accessToken，response:{}", JSONObject.toJSONString(response));
             return response.getAccess_token();
@@ -61,22 +64,20 @@ public class WechatService {
         }
     }
 
-    public String sendMessage() {
+    public String sendMessage(String openid, String msg) {
         try {
-            Map<String, Object> map = Maps.newHashMap();
-            map.put("grant_type", WechatConstant.GRANT_TYPE_VALUE);
-            map.put("appid", appid);
-            map.put("secret", app_secret);
-            map.put("force_refresh", false);
-
             SendMessage sendMessage = new SendMessage();
+            sendMessage.setTemplate_id("");
+            sendMessage.setTouser(openid);
+            sendMessage.setData(msg);
+            sendMessage.setMiniprogram_state("");
 
             String token = this.getAccessToken();
             String url = String.format(message_url, token);
 
-            AccessTokenRes response = httpUtil.doPostByJson(url, map, AccessTokenRes.class);
+            String response = httpUtil.doPostByJson(url, JSONObject.toJSONString(sendMessage), String.class);
             logger.info("发送订阅消息，response:{}", response);
-            return response.getAccess_token();
+            return null;
         } catch (Exception e) {
             logger.info("获取accessToken失败", e);
             throw new BizException(ResultCodeEnum.ACCESS_TOKEN_ERROR);

@@ -10,12 +10,12 @@ public class WechatLoginRep {
     @JSONField(name = "unionid")
     private String unionid;
     @JSONField(name = "errcode")
-    private int errcode;
+    private Integer errcode;
     @JSONField(name = "errmsg")
     private String errmsg;
 
     public boolean isSuccess() {
-        return errcode == 200;
+        return errcode == null;
     }
 
     public String getOpenid() {
@@ -42,11 +42,11 @@ public class WechatLoginRep {
         this.unionid = unionid;
     }
 
-    public int getErrcode() {
+    public Integer getErrcode() {
         return errcode;
     }
 
-    public void setErrcode(int errcode) {
+    public void setErrcode(Integer errcode) {
         this.errcode = errcode;
     }
 

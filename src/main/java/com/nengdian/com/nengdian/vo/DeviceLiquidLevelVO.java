@@ -20,7 +20,7 @@ public class DeviceLiquidLevelVO {
 
     /**
      * 液位状态
-     * 1：低液位 2：正常 3：高液位
+     * 0 正常， 1，低液位报警， 2，高液位报警
      */
     private Integer liquidStatus;
 
