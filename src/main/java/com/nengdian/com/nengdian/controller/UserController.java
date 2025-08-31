@@ -49,4 +49,10 @@ public class UserController {
         }
         return ResultResponse.failed();
     }
+
+    @GetMapping("/follow/callback")
+    @ResponseBody
+    public void follow(String param) {
+        logger.info("关注回调"+param);
+    }
 }
