@@ -64,7 +64,7 @@ public class DeviceService {
                 .map(Device::getDevId)
                 .collect(Collectors.toList());
 
-        List<DeviceRecord> deviceRecords = deviceRecordRepository.findLatestByDeviceIds(deviceIds);
+        List<DeviceRecord> deviceRecords = findLatestByDeviceIds(deviceIds);
         if (CollectionUtils.isEmpty(deviceRecords)) {
             logger.warn("getDeviceCount 设备采集记录为空, openid:{}", openid);
             return new DevCountVO(0, 0);
@@ -161,7 +161,8 @@ public class DeviceService {
         List<String> deviceIds = devices.stream()
                 .map(Device::getDevId)
                 .collect(Collectors.toList());
-        List<DeviceRecord> deviceRecords = deviceRecordRepository.findLatestByDeviceIds(deviceIds);
+        List<DeviceRecord> deviceRecords = findLatestByDeviceIds(deviceIds);
+
         if (CollectionUtils.isEmpty(deviceRecords)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE_RECORD);
         }
@@ -203,7 +204,7 @@ public class DeviceService {
         if (Objects.isNull(device)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
-        List<DeviceRecord> records = deviceRecordRepository.findLatestByDeviceIds(Lists.newArrayList(request.getDevId()));
+        List<DeviceRecord> records = findLatestByDeviceIds(Lists.newArrayList(request.getDevId()));
         if (CollectionUtils.isEmpty(records)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE_RECORD);
         }
@@ -270,6 +271,17 @@ public class DeviceService {
         };
         Page<Device> page = deviceRepository.findAll(specification, PageRequest.of(request.getPageNum(), request.getPageSize()));
         return page;
+    }
+
+    public List<DeviceRecord> findLatestByDeviceIds(List<String> deviceIds) {
+        List<DeviceRecord> list = Lists.newArrayList();
+        for (String deviceId: deviceIds) {
+            DeviceRecord record = deviceRecordRepository.findLatestByDeviceId(deviceId);
+            if (Objects.nonNull(record)) {
+                list.add(record);
+            }
+        }
+        return list;
     }
 
     private DeviceSettingVO buildDeviceDetail(Device device, User user) {

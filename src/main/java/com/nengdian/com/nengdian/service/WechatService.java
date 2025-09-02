@@ -22,10 +22,15 @@ public class WechatService {
     private static final String login_url = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
     private static final String access_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&force_refresh=false&appid=%s&secret=%s";
     private static final String message_url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=%s";
-    private static final String appid = "wx0b1b04d5b707e870";
-    private static final String app_secret = "8b7f4357479552d7944fdb7de07fcbb3";
+    /**
+     * 小程序配置
+     */
+    private static final String appid = "wxb568ad9a4bd0a37b";
+    private static final String app_secret = "c130296390b7160e4b2ce16f25a5c485";
 
-    // 服务号appid、secret
+    /**
+     * 服务号配置
+     */
     private static final String service_appid = "wx0b1b04d5b707e870";
     private static final String service_app_secret = "8b7f4357479552d7944fdb7de07fcbb3";
 
