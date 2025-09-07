@@ -11,6 +11,11 @@ import java.util.Date;
 public class User {
     @Id
     private String openid;
+    private String unionId;
+    /**
+     * 服务号用户openid
+     */
+    private String serviceOpenid;
     private String userName;
     /**
      * 语言
@@ -83,5 +88,21 @@ public class User {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
+    }
+
+    public String getServiceOpenid() {
+        return serviceOpenid;
+    }
+
+    public void setServiceOpenid(String serviceOpenid) {
+        this.serviceOpenid = serviceOpenid;
     }
 }

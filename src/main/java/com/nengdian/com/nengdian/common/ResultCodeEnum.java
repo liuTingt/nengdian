@@ -8,9 +8,11 @@ public enum ResultCodeEnum {
     FIND_RECORD_ERROR(6005, "查询历史水位记录失败"),
     SAVE_DEVICE_ERROR(6006, "保存设备失败"),
     DEVICE_HAS_EXIST(6007, "设备已存在"),
+    UPDATE_USER_ERROR(6008, "更新用户失败"),
 
     ACCESS_TOKEN_ERROR(7001, "获取到微信凭证失败"),
-    LOGIN_ERROR(7001, "获取到微信凭证失败"),
+    SEND_MESSAGE_ERROR(7002, "发送消息失败"),
+    QUERY_WECHAT_USER_ERROR(7003, "查询微信用户信息失败"),
 
     ;
 

@@ -17,4 +17,17 @@ public enum LiquidStatusEnum {
     public Integer getCode() {
         return code;
     }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public static String getStatusDesc(int status) {
+        for (LiquidStatusEnum statusEnum: LiquidStatusEnum.values()) {
+            if (statusEnum.getCode() == status) {
+                return statusEnum.getDesc();
+            }
+        }
+        return null;
+    }
 }

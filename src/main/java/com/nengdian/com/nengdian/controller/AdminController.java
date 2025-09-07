@@ -6,7 +6,6 @@ import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.ResultResponse;
 import com.nengdian.com.nengdian.entity.Device;
 import com.nengdian.com.nengdian.service.DeviceService;
-import com.nengdian.com.nengdian.service.WechatService;
 import com.nengdian.com.nengdian.vo.DevicePageVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,25 +35,6 @@ public class AdminController {
             return ResultResponse.failed(e);
         } catch (Exception e) {
             logger.error("pageList error, request:{}", JSONObject.toJSONString(request), e);
-            return ResultResponse.failed();
-        }
-    }
-
-
-    @Resource
-    private WechatService wechatService;
-
-    @PostMapping("/test")
-    @ResponseBody
-    public ResultResponse<String> test() {
-        try {
-            String accessToken = wechatService.getAccessToken();
-            return ResultResponse.success(accessToken);
-        } catch (BizException e) {
-            logger.error("test biz error, ");
-            return ResultResponse.failed(e);
-        } catch (Exception e) {
-            logger.error("test error, ");
             return ResultResponse.failed();
         }
     }

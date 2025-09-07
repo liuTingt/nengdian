@@ -34,6 +34,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,6 +56,11 @@ public class DeviceService {
 
 
     public DevCountVO getDeviceCount(String openid) {
+        User user = userRepository.findByOpenid(openid);
+        if (Objects.isNull(user)) {
+            throw new BizException(ResultCodeEnum.NOT_FIND_USER);
+        }
+
         List<Device> devices = deviceRepository.findByOpenidAndDeleted(openid, false);
         if (CollectionUtils.isEmpty(devices)) {
             new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
@@ -67,7 +73,7 @@ public class DeviceService {
         List<DeviceRecord> deviceRecords = findLatestByDeviceIds(deviceIds);
         if (CollectionUtils.isEmpty(deviceRecords)) {
             logger.warn("getDeviceCount 设备采集记录为空, openid:{}", openid);
-            return new DevCountVO(0, 0);
+            return new DevCountVO(0, 0, user.getLanguage());
         }
         int alarmCount = 0;
         int normalCount = 0;
@@ -82,7 +88,7 @@ public class DeviceService {
                 alarmCount++;
             }
         }
-        return new DevCountVO(normalCount, alarmCount);
+        return new DevCountVO(normalCount, alarmCount, user.getLanguage());
     }
 
     @Transactional
@@ -101,6 +107,7 @@ public class DeviceService {
             }
 
             logger.info("save data:{}", JSONObject.toJSON(device));
+            device.setCreateTime(new Date());
             Device result = deviceRepository.save(device);
             if (Objects.nonNull(result)) {
                 return result;

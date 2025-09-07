@@ -1,6 +1,7 @@
 package com.nengdian.com.nengdian.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.nengdian.com.nengdian.bo.MessageData;
 import com.nengdian.com.nengdian.bo.RecordBO;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -30,6 +33,8 @@ public class MqttConsumer {
     private NotifyRecordRepository notifyRecordRepository;
     @Resource
     private DeviceRepository deviceRepository;
+    @Resource
+    private WechatService wechatService;
 
 
     public void consumer(Message message) {
@@ -47,7 +52,8 @@ public class MqttConsumer {
                 topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
             }
             String devId = topic.split("/")[0];
-            recordRepository.save(buildRecord(recordBO, devId));
+            DeviceRecord record = buildRecord(recordBO, devId);
+            recordRepository.save(record);
 
             if (recordBO.getWS() == LiquidStatusEnum.Low.getCode() || recordBO.getWS() == LiquidStatusEnum.Height.getCode()) {
                 Device device = deviceRepository.findByDevId(devId);
@@ -58,9 +64,9 @@ public class MqttConsumer {
                 String openid = device.getOpenid();
                 NotifyRecord notifyRecord = notifyRecordRepository.findLastByDevId(openid, devId);
                 if (isNotify(notifyRecord)) {
-                    notifyRecordRepository.save(buildNotifyRecord(notifyRecord, openid, devId));
-                    // todo 通知用户公众号
-
+                    notifyRecord = notifyRecordRepository.save(buildNotifyRecord(notifyRecord, openid, devId));
+                    // todo 发送消息
+//                    wechatService.sendMessage(openid, buildData(device, notifyRecord.getNotifyTime(), recordBO.getWS()));
                 }
             }
         } catch (Exception e) {
@@ -80,9 +86,9 @@ public class MqttConsumer {
 
     private NotifyRecord buildNotifyRecord(NotifyRecord notifyRecord, String openid, String devId) {
         NotifyRecord record = new NotifyRecord();
-        notifyRecord.setOpenid(openid);
-        notifyRecord.setDevId(devId);
-        notifyRecord.setNotifyTime(LocalDateTime.now());
+        record.setOpenid(openid);
+        record.setDevId(devId);
+        record.setNotifyTime(LocalDateTime.now());
         if (Objects.nonNull(notifyRecord)) {
             notifyRecord.setId(notifyRecord.getId());
         }
@@ -97,7 +103,20 @@ public class MqttConsumer {
         return currentTime.minusHours(2).isAfter(notifyRecord.getNotifyTime());
     }
 
+    private String buildData(Device device, LocalDateTime time, int status) {
+        Map<String, String> map = new HashMap<>();
+        map.put("character_string", JSONObject.toJSONString(new MessageData(device.getDevId())));
+        map.put("thing2", JSONObject.toJSONString(new MessageData(device.getDevName())));
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        map.put("thing4", JSONObject.toJSONString(new MessageData(time.format(dateFormatter))));
+
+        String desc = LiquidStatusEnum.getStatusDesc(status);
+        map.put("const3", JSONObject.toJSONString(new MessageData(desc)));
+        return JSONObject.toJSONString(map);
+    }
+
     public static void main(String[] args) {
+        System.out.println(JSONObject.toJSONString(new MessageData("desc")));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime currentTime = LocalDateTime.now();
         System.out.println("当前："+currentTime.format(dateFormatter));

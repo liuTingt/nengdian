@@ -3,11 +3,9 @@ package com.nengdian.com.nengdian.bo;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.logging.log4j.util.Strings;
 
-public class AccessTokenRes {
-    @JSONField(name = "access_token")
-    private String access_token;
-    @JSONField(name = "expires_in")
-    private String expires_in;
+public class MessageRes {
+    @JSONField(name = "msgid")
+    private String msgid;
     @JSONField(name = "errcode")
     private String errcode;
     @JSONField(name = "errmsg")
@@ -17,26 +15,17 @@ public class AccessTokenRes {
         return Strings.isBlank(errcode);
     }
 
-    public String getAccess_token() {
-        return access_token;
+    public String getMsgid() {
+        return msgid;
     }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
-
-    public String getExpires_in() {
-        return expires_in;
-    }
-
-    public void setExpires_in(String expires_in) {
-        this.expires_in = expires_in;
+    public void setMsgid(String msgid) {
+        this.msgid = msgid;
     }
 
     public String getErrcode() {
         return errcode;
     }
-
     public void setErrcode(String errcode) {
         this.errcode = errcode;
     }
