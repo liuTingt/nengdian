@@ -69,7 +69,7 @@ public class WechatService {
 
     public String getAccessToken() {
         try {
-            String url = String.format(access_token_url, test_appid, test_app_secret);
+            String url = String.format(access_token_url, service_appid, service_app_secret);
             AccessTokenRes response = httpUtil.doGet(url, AccessTokenRes.class);
             logger.info("获取accessToken，response:{}", JSONObject.toJSONString(response));
             if (response.isSuccess()) {
