@@ -11,7 +11,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     User findByOpenid(String openid);
 
-    User findByUnionId(String unionId);
+    User findByUnionid(String unionid);
 
     @Query(value = "select u from User u where u.userName = ?1")
     List<User> find(@Param("name") String name);

@@ -65,8 +65,7 @@ public class MqttConsumer {
                 NotifyRecord notifyRecord = notifyRecordRepository.findLastByDevId(openid, devId);
                 if (isNotify(notifyRecord)) {
                     notifyRecord = notifyRecordRepository.save(buildNotifyRecord(notifyRecord, openid, devId));
-                    // todo 发送消息
-//                    wechatService.sendMessage(openid, buildData(device, notifyRecord.getNotifyTime(), recordBO.getWS()));
+                    wechatService.sendMessage(openid, buildData(device, notifyRecord.getNotifyTime(), recordBO.getWS()));
                 }
             }
         } catch (Exception e) {
@@ -103,16 +102,14 @@ public class MqttConsumer {
         return currentTime.minusHours(2).isAfter(notifyRecord.getNotifyTime());
     }
 
-    private String buildData(Device device, LocalDateTime time, int status) {
-        Map<String, String> map = new HashMap<>();
-        map.put("character_string", JSONObject.toJSONString(new MessageData(device.getDevId())));
-        map.put("thing2", JSONObject.toJSONString(new MessageData(device.getDevName())));
+    private Map<String, MessageData> buildData(Device device, LocalDateTime time, int status) {
+        Map<String, MessageData> map = new HashMap<>();
+        map.put("thing2", new MessageData(device.getDevName()));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        map.put("thing4", JSONObject.toJSONString(new MessageData(time.format(dateFormatter))));
-
+        map.put("time4", new MessageData(time.format(dateFormatter)));
         String desc = LiquidStatusEnum.getStatusDesc(status);
-        map.put("const3", JSONObject.toJSONString(new MessageData(desc)));
-        return JSONObject.toJSONString(map);
+        map.put("thing5", new MessageData(desc));
+        return map;
     }
 
     public static void main(String[] args) {

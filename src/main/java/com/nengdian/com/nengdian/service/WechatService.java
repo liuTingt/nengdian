@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.nengdian.com.nengdian.bo.*;
 import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.HttpUtil;
+import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.common.ResultCodeEnum;
 import com.nengdian.com.nengdian.entity.User;
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +46,7 @@ public class WechatService {
     /**
      * 设备告警通知-服务号消息模版id
      */
-    private static final String message_template_id = "9at3uAJI4UlKhGECLroVKOiBeO2IhiE6x5UlxIEAJ4Y";
+    private static final String message_template_id = "ZiroR5LsxCJHszRWx0spTCV8bpy-Gp-3ltDUC76yThs";
 
     @Resource
     private HttpUtil httpUtil;
@@ -63,6 +66,9 @@ public class WechatService {
         User user = userService.getUser(response.getOpenid());
         if (Objects.isNull(user)) {
             user = userService.save(response.getOpenid(), response.getUnionid());
+        } else {
+            // todo 上线放开
+            user = userService.save(response.getOpenid(), response.getUnionid());
         }
         return user;
     }
@@ -81,11 +87,15 @@ public class WechatService {
         throw new BizException(ResultCodeEnum.ACCESS_TOKEN_ERROR);
     }
 
-    public String sendMessage(String openid, String msg) {
+    public String sendMessage(String openid, Map<String, MessageData> msg) {
         try {
+            User user = userService.getUser(openid);
+            if (Objects.isNull(user)) {
+                throw new BizException(ResultCodeEnum.NOT_FIND_USER);
+            }
             SendMessage sendMessage = new SendMessage();
             sendMessage.setTemplate_id(message_template_id);
-            sendMessage.setTouser(openid);
+            sendMessage.setTouser(user.getServiceOpenid());
             sendMessage.setData(msg);
             String token = this.getAccessToken();
             String url = String.format(message_url, token);
@@ -95,6 +105,8 @@ public class WechatService {
             if (response.isSuccess()) {
                 return response.getMsgid();
             }
+        } catch (BizException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("发送消息异常", e);
         }
@@ -115,4 +127,5 @@ public class WechatService {
         }
         throw new BizException(ResultCodeEnum.QUERY_WECHAT_USER_ERROR);
     }
+
 }

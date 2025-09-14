@@ -2,6 +2,8 @@ package com.nengdian.com.nengdian.bo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.Map;
+
 public class SendMessage {
 
     @JSONField(name = "template_id")
@@ -11,7 +13,7 @@ public class SendMessage {
     private String touser;
 
     @JSONField(name = "data")
-    private String data;
+    private Map<String, MessageData> data;
 
     /**
      * 跳转小程序类型：developer为开发版；trial为体验版；formal为正式版；默认为正式版
@@ -40,11 +42,11 @@ public class SendMessage {
         this.touser = touser;
     }
 
-    public String getData() {
+    public Map<String, MessageData> getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(Map<String, MessageData> data) {
         this.data = data;
     }
 

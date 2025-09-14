@@ -33,7 +33,7 @@ INDEX idx_dev_id_create_time(`dev_id`,`create_time`)
 CREATE TABLE `user` (
 `openid` varchar(64) NOT NULL COMMENT '微信小程序用户openid',
 `user_name` varchar(64) DEFAULT NULL COMMENT '微信用户名称',
-`unionId` varchar(64) DEFAULT NULL COMMENT '微信用户unionId',
+`unionid` varchar(64) DEFAULT NULL COMMENT '微信用户unionid',
 `service_openid` varchar(64) DEFAULT NULL COMMENT '微信服务号openid',
 `language` varchar(32) DEFAULT NULL COMMENT '语言',
 `remind_switch` tinyint(1) NOT NULL default 1 COMMENT '公众号提醒开关 0:关   1:开',
@@ -41,7 +41,7 @@ CREATE TABLE `user` (
 `modify_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日期',
 PRIMARY KEY (`openid`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
-alter table user add index idx_unionId(unionId);
+alter table user add index idx_unionid(unionid);
 
 CREATE TABLE `notify_record` (
 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键',

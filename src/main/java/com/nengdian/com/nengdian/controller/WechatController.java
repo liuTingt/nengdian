@@ -2,13 +2,15 @@ package com.nengdian.com.nengdian.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nengdian.com.nengdian.bo.MessageData;
-import com.nengdian.com.nengdian.bo.ReceiveMessageBO;
 import com.nengdian.com.nengdian.bo.WechatUserInfoRes;
 import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.common.ResultResponse;
 import com.nengdian.com.nengdian.service.UserService;
 import com.nengdian.com.nengdian.service.WechatService;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -49,11 +51,16 @@ public class WechatController {
     public String receiverMsg(@RequestBody String message, HttpServletRequest request) {
         try {
             logger.info("接收消息:{}", JSONObject.toJSONString(message));
-            ReceiveMessageBO receiveMessage = JSONObject.parseObject(message, ReceiveMessageBO.class);
-            if (!"subscribe".equals(receiveMessage.getEvent())) {
-                return "success";
-            }
-            WechatUserInfoRes wechatUser = wechatService.queryUser(receiveMessage.getFromUserName());
+            Document document = DocumentHelper.parseText(message);
+            Element root = document.getRootElement();
+            String openid = root.elementText("FromUserName");
+
+            // todo 只有关注时保存unionid
+            String event = root.elementText("Event");
+//            if (!"subscribe".equals(event)) {
+//                return "success";
+//            }
+            WechatUserInfoRes wechatUser = wechatService.queryUser(openid);
             userService.updateServiceUser(wechatUser);
             return "success";
         } catch (BizException e) {
@@ -83,16 +90,15 @@ public class WechatController {
     @ResponseBody
     public ResultResponse<String> send(@RequestParam("openid") String openid) {
         try {
-            Map<String, String> map = new HashMap<>();
-            map.put("character_string", JSONObject.toJSONString(new MessageData("设备编号")));
-            map.put("thing2", JSONObject.toJSONString(new MessageData("设备名称")));
+            Map<String, MessageData> map = new HashMap<>();
+            map.put("thing2", new MessageData("设备名称"));
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime time = LocalDateTime.now();
-            map.put("thing4", JSONObject.toJSONString(new MessageData(time.format(dateFormatter))));
+            map.put("time4", new MessageData(time.format(dateFormatter)));
             String desc = LiquidStatusEnum.getStatusDesc(2);
-            map.put("const3", JSONObject.toJSONString(new MessageData(desc)));
+            map.put("thing5", new MessageData("液位过高"));
 
-            String msgid = wechatService.sendMessage(openid, JSONObject.toJSONString(map));
+            String msgid = wechatService.sendMessage(openid, map);
             return ResultResponse.success(msgid);
         } catch (BizException e) {
             logger.error("send message biz error, ");

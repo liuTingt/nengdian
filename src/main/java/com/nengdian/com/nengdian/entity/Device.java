@@ -4,6 +4,7 @@ package com.nengdian.com.nengdian.entity;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -80,7 +81,7 @@ public class Device {
     private Date createTime;
 
     @LastModifiedDate
-//    @Column(name = "modify_time", nullable = false)
+    @Column(name = "modify_time", nullable = false)
     private Date modifyTime;
 
     public String getDevId() {

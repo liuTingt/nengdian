@@ -146,6 +146,7 @@ public class DeviceService {
         currentDevice.setLowerLimit(request.getLowerLimit());
         currentDevice.setLowEnergySwitch(request.isLowEnergySwitch());
         currentDevice.setDrainageModel(request.isDrainageModel());
+        currentDevice.setModifyTime(new Date());
         Device result = deviceRepository.save(currentDevice);
 
         User currentUser = userRepository.findByOpenid(request.getOpenid());

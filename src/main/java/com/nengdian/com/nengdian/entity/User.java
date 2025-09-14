@@ -11,7 +11,7 @@ import java.util.Date;
 public class User {
     @Id
     private String openid;
-    private String unionId;
+    private String unionid;
     /**
      * 服务号用户openid
      */
@@ -90,12 +90,12 @@ public class User {
         this.modifyTime = modifyTime;
     }
 
-    public String getUnionId() {
-        return unionId;
+    public String getUnionid() {
+        return unionid;
     }
 
-    public void setUnionId(String unionId) {
-        this.unionId = unionId;
+    public void setUnionid(String unionid) {
+        this.unionid = unionid;
     }
 
     public String getServiceOpenid() {

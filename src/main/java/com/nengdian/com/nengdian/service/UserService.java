@@ -20,10 +20,10 @@ public class UserService {
     private UserRepository userRepository;
 
 
-    public User save(String openid, String unionId) {
+    public User save(String openid, String unionid) {
         User user = new User();
         user.setOpenid(openid);
-        user.setUnionId(unionId);
+        user.setUnionid(unionid);
         user.setLanguage("zh-CN");
         user.setRemindSwitch(false);
         user.setCreateTime(new Date());
@@ -33,7 +33,7 @@ public class UserService {
 
     public User updateServiceUser(WechatUserInfoRes wechatUser) {
         try {
-            User user = userRepository.findByUnionId(wechatUser.getUnionid());
+            User user = userRepository.findByUnionid(wechatUser.getUnionid());
             if (Objects.isNull(user)) {
                 throw new BizException(ResultCodeEnum.NOT_FIND_USER);
             }

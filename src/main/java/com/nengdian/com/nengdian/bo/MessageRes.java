@@ -12,7 +12,7 @@ public class MessageRes {
     private String errmsg;
 
     public boolean isSuccess() {
-        return Strings.isBlank(errcode);
+        return Strings.isBlank(errcode) || "0".equals(errcode);
     }
 
     public String getMsgid() {
