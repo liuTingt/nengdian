@@ -101,7 +101,7 @@ public class WechatService {
             String url = String.format(message_url, token);
 
             MessageRes response = httpUtil.doPostByJson(url, JSONObject.toJSONString(sendMessage), MessageRes.class);
-            logger.info("发送订阅消息，response:{}", JSONObject.toJSONString(response));
+            logger.info("发送订阅消息，openid:{}, serviceOpenid:{}, response:{}", openid, user.getServiceOpenid(), JSONObject.toJSONString(response));
             if (response.isSuccess()) {
                 return response.getMsgid();
             }
