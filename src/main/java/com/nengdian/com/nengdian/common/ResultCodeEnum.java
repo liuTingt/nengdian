@@ -9,6 +9,7 @@ public enum ResultCodeEnum {
     SAVE_DEVICE_ERROR(6006, "保存设备失败"),
     DEVICE_HAS_EXIST(6007, "设备已存在"),
     UPDATE_USER_ERROR(6008, "更新用户失败"),
+    NOT_FIND_USER_SERVICE_OPEN_ID(6009, "用户服务号不存在"),
 
     ACCESS_TOKEN_ERROR(7001, "获取到微信凭证失败"),
     SEND_MESSAGE_ERROR(7002, "发送消息失败"),

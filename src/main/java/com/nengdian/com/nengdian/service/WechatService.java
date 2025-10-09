@@ -7,6 +7,7 @@ import com.nengdian.com.nengdian.common.HttpUtil;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.common.ResultCodeEnum;
 import com.nengdian.com.nengdian.entity.User;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -92,6 +93,9 @@ public class WechatService {
             User user = userService.getUser(openid);
             if (Objects.isNull(user)) {
                 throw new BizException(ResultCodeEnum.NOT_FIND_USER);
+            }
+            if (Strings.isBlank(user.getServiceOpenid())) {
+                throw new BizException(ResultCodeEnum.NOT_FIND_USER_SERVICE_OPEN_ID);
             }
             SendMessage sendMessage = new SendMessage();
             sendMessage.setTemplate_id(message_template_id);
