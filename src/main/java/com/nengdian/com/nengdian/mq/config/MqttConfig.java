@@ -90,7 +90,7 @@ public class MqttConfig {
                 new MqttPahoMessageDrivenChannelAdapter(
                         inClientId,
                         mqttClientFactory,
-                        "f4650b5bbaa6/service/post"); // 订阅主题通配符 /#
+                        "f4650b5bbaa6/service/post","1c69203e57fa/service/post"); // 订阅主题通配符 /#
 //                        "/service/post"); // 订阅主题通配符 /#
         adapter.setCompletionTimeout(5000);
 
