@@ -19,6 +19,7 @@ public interface DeviceRepository extends JpaRepository<Device, String> {
     long countByOpenidAndDeleted(String openid, Boolean deleted);
 
     Device findByOpenidAndDevIdAndDeleted(String openid, String devId, boolean deleted);
+    Device findByDevIdAndDeleted(String devId, boolean deleted);
 
     @Query("select d from Device d where d.openid = :openid and (:devId is null or d.devId like %:devId%) " +
             "and (:devName is null or d.devName like %:devName%) and (:type is null or d.type = :type)" +
@@ -26,9 +27,12 @@ public interface DeviceRepository extends JpaRepository<Device, String> {
     List<Device> findByDynamicConditions(@Param("openid") String openid, @Param("devId") String devId,
                                          @Param("devName") String devName, @Param("type") Integer type);
 
+//    @Modifying
+//    @Query("update Device d set d.devName = :devName where d.devId = :devId and d.openid = :openid")
+//    int updateDeviceName(@Param("openid") String openid, @Param("devId") String devId, @Param("devName") String devName);
     @Modifying
-    @Query("update Device d set d.devName = :devName where d.devId = :devId and d.openid = :openid")
-    int updateDeviceName(@Param("openid") String openid, @Param("devId") String devId, @Param("devName") String devName);
+    @Query("update Device d set d.devName = :devName where d.devId = :devId")
+    int updateDeviceName(@Param("devId") String devId, @Param("devName") String devName);
 
     @Modifying
     @Transactional

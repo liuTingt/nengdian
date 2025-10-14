@@ -6,9 +6,11 @@ import com.nengdian.com.nengdian.bo.RecordBO;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.dao.DeviceRepository;
+import com.nengdian.com.nengdian.dao.UserDeviceRepository;
 import com.nengdian.com.nengdian.dao.NotifyRecordRepository;
 import com.nengdian.com.nengdian.entity.Device;
 import com.nengdian.com.nengdian.entity.DeviceRecord;
+import com.nengdian.com.nengdian.entity.UserDevice;
 import com.nengdian.com.nengdian.entity.NotifyRecord;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,6 +36,8 @@ public class MqttConsumer {
     private NotifyRecordRepository notifyRecordRepository;
     @Resource
     private DeviceRepository deviceRepository;
+    @Resource
+    private UserDeviceRepository userDeviceRepository;
     @Resource
     private WechatService wechatService;
 
@@ -61,11 +66,14 @@ public class MqttConsumer {
                     logger.error("设备采集数据报警，未找到设备详情，devId:{}", devId);
                     return;
                 }
-                String openid = device.getOpenid();
-                NotifyRecord notifyRecord = notifyRecordRepository.findLastByDevId(openid, devId);
-                if (isNotify(notifyRecord)) {
-                    notifyRecord = notifyRecordRepository.save(buildNotifyRecord(notifyRecord, openid, devId));
-                    wechatService.sendMessage(openid, buildData(device, notifyRecord.getNotifyTime(), recordBO.getWS()));
+                List<UserDevice> userDevices = userDeviceRepository.findUserDeviceByDevId(devId);
+                for (UserDevice userDevice : userDevices) {
+                    String openid = userDevice.getOpenid();
+                    NotifyRecord notifyRecord = notifyRecordRepository.findLastByDevId(openid, devId);
+                    if (isNotify(notifyRecord)) {
+                        notifyRecord = notifyRecordRepository.save(buildNotifyRecord(notifyRecord, openid, devId));
+                        wechatService.sendMessage(openid, buildData(device, notifyRecord.getNotifyTime(), recordBO.getWS()));
+                    }
                 }
             }
         } catch (Exception e) {

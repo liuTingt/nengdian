@@ -52,6 +52,14 @@ PRIMARY KEY (`id`),
 INDEX idx_openid_dev_id(`openid`,`dev_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE `user_device` (
+ `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+ `dev_id` varchar(64) NOT NULL COMMENT '设备编码',
+ `openid` varchar(64) NOT NULL COMMENT '微信小程序用户openid',
+ `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
+ PRIMARY KEY (`id`),
+ INDEX idx_openid_dev_id(`openid`, `dev_id`)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 事件调度器
 -- 首先确保事件调度器已启用

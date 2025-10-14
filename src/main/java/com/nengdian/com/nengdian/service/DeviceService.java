@@ -11,9 +11,11 @@ import com.nengdian.com.nengdian.common.ResultCodeEnum;
 import com.nengdian.com.nengdian.controller.UserController;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.dao.DeviceRepository;
+import com.nengdian.com.nengdian.dao.UserDeviceRepository;
 import com.nengdian.com.nengdian.dao.UserRepository;
 import com.nengdian.com.nengdian.entity.Device;
 import com.nengdian.com.nengdian.entity.DeviceRecord;
+import com.nengdian.com.nengdian.entity.UserDevice;
 import com.nengdian.com.nengdian.entity.User;
 import com.nengdian.com.nengdian.vo.*;
 import org.apache.logging.log4j.util.Strings;
@@ -52,6 +54,8 @@ public class DeviceService {
     @Resource
     private UserRepository userRepository;
     @Resource
+    private UserDeviceRepository userDeviceRepository;
+    @Resource
     private MqttPublish mqttPublish;
 
 
@@ -60,14 +64,10 @@ public class DeviceService {
         if (Objects.isNull(user)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_USER);
         }
+        List<UserDevice> userDevices = userDeviceRepository.findUserDeviceByOpenid(openid);
 
-        List<Device> devices = deviceRepository.findByOpenidAndDeleted(openid, false);
-        if (CollectionUtils.isEmpty(devices)) {
-            new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
-        }
-
-        List<String> deviceIds = devices.stream()
-                .map(Device::getDevId)
+        List<String> deviceIds = userDevices.stream()
+                .map(UserDevice::getDevId)
                 .collect(Collectors.toList());
 
         List<DeviceRecord> deviceRecords = findLatestByDeviceIds(deviceIds);
@@ -78,8 +78,8 @@ public class DeviceService {
         int alarmCount = 0;
         int normalCount = 0;
         Map<String, Integer> deviceRecordMap = deviceRecords.stream().collect(Collectors.toMap(DeviceRecord::getDevId, DeviceRecord::getLiquidStatus));
-        for (Device device : devices) {
-            Integer status = deviceRecordMap.get(device.getDevId());
+        for (UserDevice userDevice : userDevices) {
+            Integer status = deviceRecordMap.get(userDevice.getDevId());
             if (Objects.nonNull(status) && LiquidStatusEnum.Normal.getCode().equals(status)) {
                 normalCount++;
             }
@@ -93,36 +93,55 @@ public class DeviceService {
 
     @Transactional
     public Device create(Device device) {
+        Device result = null;
         try {
-            if (Strings.isBlank(device.getDevName())) {
-                long count = deviceRepository.countByOpenidAndDeleted(device.getOpenid(), false);
-                device.setDevName("水箱"+ ++count);
-            }
             String lowDevId = device.getDevId().replace(":","").toLowerCase();
             device.setDevId(lowDevId);
+            device.setCreateTime(new Date());
 
             Device currentDevice = deviceRepository.findByDevId(device.getDevId());
-            if (Objects.nonNull(currentDevice)) {
-                throw new BizException(ResultCodeEnum.DEVICE_HAS_EXIST);
+            if (Objects.isNull(currentDevice)) {
+                if (Strings.isBlank(device.getDevName())) {
+                    long count = userDeviceRepository.countByOpenid(device.getOpenid());
+                    device.setDevName("水箱"+ ++count);
+                }
+                logger.info("save data:{}", JSONObject.toJSON(device));
+                result = deviceRepository.save(device);
+            } else {
+                UserDevice currentUserDevice = userDeviceRepository.findUserDeviceByDevIdAndOpenid(device.getDevId(), device.getOpenid());
+                if (Objects.nonNull(currentUserDevice)) {
+                    throw new BizException(ResultCodeEnum.DEVICE_HAS_EXIST);
+                }
+                if (Strings.isBlank(device.getDevName())) {
+                    device.setDevName(currentDevice.getDevName());
+                }
+                result = currentDevice;
             }
 
-            logger.info("save data:{}", JSONObject.toJSON(device));
-            device.setCreateTime(new Date());
-            Device result = deviceRepository.save(device);
-            if (Objects.nonNull(result)) {
-                return result;
-            }
-            throw new BizException(ResultCodeEnum.SAVE_DEVICE_ERROR);
+            UserDevice userDevice = new UserDevice();
+            userDevice.setOpenid(device.getOpenid());
+            userDevice.setDevId(device.getDevId());
+            userDevice.setCreateTime(LocalDateTime.now());
+            userDeviceRepository.save(userDevice);
+
+            return result;
+        } catch (BizException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("create device error, device:{}", JSONObject.toJSON(device), e);
-            throw e;
         }
+        throw new BizException(ResultCodeEnum.SAVE_DEVICE_ERROR);
     }
 
     @Transactional
     public boolean update(Device device) {
         try {
-            int row = deviceRepository.updateDeviceName(device.getOpenid(), device.getDevId(), device.getDevName());
+            UserDevice userDevice = userDeviceRepository.findUserDeviceByDevIdAndOpenid(device.getDevId(), device.getOpenid());
+            if (Objects.isNull(userDevice)) {
+                logger.error("用户没有设备修改权限");
+                return false;
+            }
+            int row = deviceRepository.updateDeviceName(device.getDevId(), device.getDevName());
             return row > 0;
         } catch (Exception e) {
             logger.error("update deviceName error", e);
@@ -131,12 +150,21 @@ public class DeviceService {
     }
 
     public boolean delete(Device device) {
-        int row = deviceRepository.deleted(device.getOpenid(), device.getDevId());
-        return row > 0;
+        try {
+            userDeviceRepository.deleteUserDeviceByDevIdAndOpenid(device.getDevId(), device.getOpenid());
+            return true;
+        } catch (Exception e) {
+            logger.error("delete device error", e);
+        }
+        return false;
     }
 
     public void setting(SettingAO request) {
-        Device currentDevice = deviceRepository.findByOpenidAndDevIdAndDeleted(request.getOpenid(), request.getDevId(),false);
+        UserDevice userDevice = userDeviceRepository.findUserDeviceByDevIdAndOpenid(request.getDevId(), request.getOpenid());
+        if (Objects.isNull(userDevice)) {
+            throw new BizException(ResultCodeEnum.NOT_FIND_USER_DEVICE);
+        }
+        Device currentDevice = deviceRepository.findByDevIdAndDeleted(request.getDevId(),false);
         if (Objects.isNull(currentDevice)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
@@ -161,7 +189,15 @@ public class DeviceService {
     }
 
     public List<DeviceDetailVO> queryList(QueryDeviceAO request) {
-        List<Device> devices = deviceRepository.findAll(deviceSpecification(request));
+        List<UserDevice> userDevices = userDeviceRepository.findUserDeviceByOpenid(request.getOpenid());
+        if (CollectionUtils.isEmpty(userDevices)) {
+            logger.warn("未找到用户设备");
+            return Lists.newArrayList();
+        }
+
+        List<String> devIds = userDevices.stream().map(UserDevice::getDevId).collect(Collectors.toList());
+
+        List<Device> devices = deviceRepository.findAll(deviceSpecification(request, devIds));
         if (CollectionUtils.isEmpty(devices)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
@@ -196,11 +232,15 @@ public class DeviceService {
     }
 
     public DeviceSettingVO getDetail(Device request) {
+        UserDevice record = userDeviceRepository.findUserDeviceByDevIdAndOpenid(request.getDevId(), request.getOpenid());
+        if (Objects.isNull(record)) {
+            throw new BizException(ResultCodeEnum.NOT_FIND_USER_DEVICE);
+        }
         User user = userRepository.findByOpenid(request.getOpenid());
         if (Objects.isNull(user)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_USER);
         }
-        Device device = deviceRepository.findByOpenidAndDevIdAndDeleted(request.getOpenid(), request.getDevId(), false);
+        Device device = deviceRepository.findByDevIdAndDeleted(request.getDevId(), false);
         if (Objects.isNull(device)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
@@ -208,10 +248,15 @@ public class DeviceService {
     }
 
     public DeviceLiquidLevelVO getLiquidLevel(Device request) {
-        Device device = deviceRepository.findByOpenidAndDevIdAndDeleted(request.getOpenid(), request.getDevId(), false);
+        UserDevice userDevice = userDeviceRepository.findUserDeviceByDevIdAndOpenid(request.getDevId(), request.getOpenid());
+        if (Objects.isNull(userDevice)) {
+            throw new BizException(ResultCodeEnum.NOT_FIND_USER_DEVICE);
+        }
+        Device device = deviceRepository.findByDevIdAndDeleted(request.getDevId(), false);
         if (Objects.isNull(device)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
+
         List<DeviceRecord> records = findLatestByDeviceIds(Lists.newArrayList(request.getDevId()));
         if (CollectionUtils.isEmpty(records)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE_RECORD);
@@ -226,7 +271,11 @@ public class DeviceService {
     }
 
     public List<DeviceAvgLiquidLevelVO> getDeviceRecordList(Device request) {
-        Device device = deviceRepository.findByOpenidAndDevIdAndDeleted(request.getOpenid(), request.getDevId(), false);
+        UserDevice userDevice = userDeviceRepository.findUserDeviceByDevIdAndOpenid(request.getDevId(), request.getOpenid());
+        if (Objects.isNull(userDevice)) {
+            throw new BizException(ResultCodeEnum.NOT_FIND_USER_DEVICE);
+        }
+        Device device = deviceRepository.findByDevIdAndDeleted(request.getDevId(), false);
         if (Objects.isNull(device)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
@@ -309,14 +358,14 @@ public class DeviceService {
         return deviceDetail;
     }
 
-    private Specification<Device> deviceSpecification(QueryDeviceAO request) {
+    private Specification<Device> deviceSpecification(QueryDeviceAO request, List<String> devIds) {
         return new Specification<Device>() {
             @Override
             public Predicate toPredicate(Root<Device> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = Lists.newArrayList();
-                if (Strings.isNotBlank(request.getOpenid())) {
-                    predicates.add(cb.like(root.get("openid"), request.getOpenid()));
-                }
+
+                predicates.add(cb.in(root.get("devId")).value(devIds));
+
                 if (Strings.isNotBlank(request.getDevId())) {
                     predicates.add(cb.like(root.get("devId"), "%" + request.getDevId() + "%"));
                 }
