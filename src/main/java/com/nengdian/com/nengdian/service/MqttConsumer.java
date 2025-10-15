@@ -3,6 +3,7 @@ package com.nengdian.com.nengdian.service;
 import com.alibaba.fastjson.JSONObject;
 import com.nengdian.com.nengdian.bo.MessageData;
 import com.nengdian.com.nengdian.bo.RecordBO;
+import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.dao.DeviceRepository;
@@ -76,6 +77,8 @@ public class MqttConsumer {
                     }
                 }
             }
+        } catch (BizException e) {
+            logger.error("处理MQTT消息业务异常,record:{}", JSONObject.toJSON(message), e);
         } catch (Exception e) {
             logger.error("处理MQTT消息异常,record:{}", JSONObject.toJSON(message), e);
         }

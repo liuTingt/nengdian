@@ -20,11 +20,10 @@ public class MqttPublish {
 
     public void publish(SettingAO request) {
         try {
-            String devId = request.getDevId().replace(":","");
-            String topic = String.format(SUFFIX, devId);
+            String topic = String.format(SUFFIX, request.getDevId());
             InstructionBO instruction = build(request);
-
             mqttGateway.sendToMqtt(topic,0, JSONObject.toJSONString(instruction));
+            logger.info("发送指令成功:{}", JSONObject.toJSONString(instruction));
         } catch (Exception e) {
             logger.error("发送指令失败，request:{}", JSONObject.toJSON(request));
         }
