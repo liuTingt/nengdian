@@ -54,7 +54,7 @@ public class SettingAO {
      * 低能耗开关
      * 默认开启，用户不可设置
      */
-    private boolean lowEnergySwitch = true;
+    private boolean lowEnergySwitch = false;
 
     /**
      * 排水模式

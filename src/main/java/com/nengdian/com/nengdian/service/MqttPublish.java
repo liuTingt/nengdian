@@ -31,11 +31,11 @@ public class MqttPublish {
 
     private InstructionBO build(SettingAO request) {
         InstructionBO instruction = new InstructionBO();
-        instruction.setSX(request.getUpperLimit());
-        instruction.setXX(request.getLowerLimit());
+        instruction.setSX((double) request.getUpperLimit()/100);
+        instruction.setXX((double) request.getLowerLimit()/100);
         instruction.setSM(request.isLowEnergySwitch());
-        instruction.setI(request.getInstallHeight());
-        instruction.setF(request.getDistance());
+        instruction.setI((double) request.getInstallHeight()/100);
+        instruction.setF((double) request.getDistance());
         instruction.setPump(0);
         if (request.isDrainageModel()) {
             instruction.setPump(1);
