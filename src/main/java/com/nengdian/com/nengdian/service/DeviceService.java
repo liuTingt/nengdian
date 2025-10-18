@@ -79,10 +79,8 @@ public class DeviceService {
         int normalCount = 0;
         Map<String, Integer> deviceRecordMap = deviceRecords.stream().collect(Collectors.toMap(DeviceRecord::getDevId, DeviceRecord::getLiquidStatus));
         for (UserDevice userDevice : userDevices) {
+            normalCount++;
             Integer status = deviceRecordMap.get(userDevice.getDevId());
-            if (Objects.nonNull(status) && LiquidStatusEnum.Normal.getCode().equals(status)) {
-                normalCount++;
-            }
             if (Objects.nonNull(status) &&
                     (LiquidStatusEnum.Low.getCode().equals(status) || LiquidStatusEnum.Height.getCode().equals(status))) {
                 alarmCount++;

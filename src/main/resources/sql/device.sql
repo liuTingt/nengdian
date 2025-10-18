@@ -58,7 +58,7 @@ CREATE TABLE `user_device` (
  `openid` varchar(64) NOT NULL COMMENT '微信小程序用户openid',
  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
  PRIMARY KEY (`id`),
- INDEX idx_openid_dev_id(`openid`, `dev_id`)
+ unique uk_openid_dev_id(`openid`, `dev_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 事件调度器
