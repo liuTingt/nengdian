@@ -98,8 +98,8 @@ public class WechatController {
             String desc = LiquidStatusEnum.getStatusDesc(2);
             map.put("thing5", new MessageData("液位过高"));
 
-            String msgid = wechatService.sendMessage(openid, map);
-            return ResultResponse.success(msgid);
+            boolean result = wechatService.sendMessage(openid, map);
+            return ResultResponse.success();
         } catch (BizException e) {
             logger.error("send message biz error, ");
             return ResultResponse.failed(e);

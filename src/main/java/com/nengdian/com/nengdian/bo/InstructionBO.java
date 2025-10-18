@@ -8,12 +8,14 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class InstructionBO {
     /**
      * 上限
+     * 单位：百分比值，10%，穿10
      */
     @JSONField(name = "SX")
     private double SX;
 
     /**
      * 下限
+     * 单位：百分比值，10%，穿10
      */
     @JSONField(name = "XX")
     private double XX;

@@ -88,7 +88,7 @@ public class WechatService {
         throw new BizException(ResultCodeEnum.ACCESS_TOKEN_ERROR);
     }
 
-    public String sendMessage(String openid, Map<String, MessageData> msg) {
+    public boolean sendMessage(String openid, Map<String, MessageData> msg) {
         try {
             User user = userService.getUser(openid);
             if (Objects.isNull(user)) {
@@ -106,15 +106,14 @@ public class WechatService {
 
             MessageRes response = httpUtil.doPostByJson(url, JSONObject.toJSONString(sendMessage), MessageRes.class);
             logger.info("发送订阅消息，openid:{}, serviceOpenid:{}, response:{}", openid, user.getServiceOpenid(), JSONObject.toJSONString(response));
-            if (response.isSuccess()) {
-                return response.getMsgid();
-            }
+            return response.isSuccess();
         } catch (BizException e) {
-            throw e;
+            logger.error("发送消息业务异常", e);
         } catch (Exception e) {
             logger.error("发送消息异常", e);
         }
-        throw new BizException(ResultCodeEnum.SEND_MESSAGE_ERROR);
+        return false;
+//        throw new BizException(ResultCodeEnum.SEND_MESSAGE_ERROR);
     }
 
     public WechatUserInfoRes queryUser(String openid) {

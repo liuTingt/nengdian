@@ -31,8 +31,8 @@ public class MqttPublish {
 
     private InstructionBO build(SettingAO request) {
         InstructionBO instruction = new InstructionBO();
-        instruction.setSX((double) request.getUpperLimit()/100);
-        instruction.setXX((double) request.getLowerLimit()/100);
+        instruction.setSX((double) request.getUpperLimit());
+        instruction.setXX((double) request.getLowerLimit());
         instruction.setSM(request.isLowEnergySwitch());
         instruction.setI((double) request.getInstallHeight()/100);
         instruction.setF((double) request.getDistance()/100);
