@@ -11,6 +11,7 @@ public enum ResultCodeEnum {
     UPDATE_USER_ERROR(6008, "更新用户失败"),
     NOT_FIND_USER_SERVICE_OPEN_ID(6009, "用户服务号不存在"),
     NOT_FIND_DEVICE(6009, "没有找到设备"),
+    NOT_OPEN_REMIND(6010, "用户未开启公众号提醒"),
 
     ACCESS_TOKEN_ERROR(7001, "获取到微信凭证失败"),
     SEND_MESSAGE_ERROR(7002, "发送消息失败"),

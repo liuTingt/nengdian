@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.nengdian.com.nengdian.bo.*;
 import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.HttpUtil;
-import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.common.ResultCodeEnum;
 import com.nengdian.com.nengdian.entity.User;
 import org.apache.logging.log4j.util.Strings;
@@ -13,9 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -67,9 +63,6 @@ public class WechatService {
         User user = userService.getUser(response.getOpenid());
         if (Objects.isNull(user)) {
             user = userService.save(response.getOpenid(), response.getUnionid());
-        } else {
-            // todo 上线放开
-            user = userService.save(response.getOpenid(), response.getUnionid());
         }
         return user;
     }
@@ -93,6 +86,9 @@ public class WechatService {
             User user = userService.getUser(openid);
             if (Objects.isNull(user)) {
                 throw new BizException(ResultCodeEnum.NOT_FIND_USER);
+            }
+            if (!user.isRemindSwitch()) {
+                throw new BizException(ResultCodeEnum.NOT_OPEN_REMIND);
             }
             if (Strings.isBlank(user.getServiceOpenid())) {
                 throw new BizException(ResultCodeEnum.NOT_FIND_USER_SERVICE_OPEN_ID);

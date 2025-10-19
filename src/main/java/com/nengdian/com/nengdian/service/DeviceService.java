@@ -306,13 +306,13 @@ public class DeviceService {
         return result;
     }
 
-    public Page<Device> pageList(QueryDevicePageAO request) {
+    public Page<Device> pageList(QueryDevicePageAO request, List<String> devIds) {
         Specification<Device> specification = new Specification<Device>() {
             @Override
             public Predicate toPredicate(Root<Device> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = Lists.newArrayList();
-                if (Strings.isNotBlank(request.getOpenid())) {
-                    predicates.add(cb.equal(root.get("openid"), request.getOpenid()));
+                if (!CollectionUtils.isEmpty(devIds)) {
+                    predicates.add(cb.in(root.get("devId")).value(devIds));
                 }
                 if (Strings.isNotBlank(request.getDevId())) {
                     predicates.add(cb.like(root.get("devId"), "%" + request.getDevId() + "%"));
