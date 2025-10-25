@@ -57,25 +57,38 @@ public class MqttConsumer {
             if (!Objects.isNull(message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC))) {
                 topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
             }
+
             String devId = topic.split("/")[0];
-            DeviceRecord record = buildRecord(recordBO, devId);
-            recordRepository.save(record);
+            DeviceRecord currentRecord = recordRepository.findDeviceRecordByDevId(devId);
+            Integer currentStatus = Objects.nonNull(currentRecord) ? currentRecord.getLiquidStatus() : null;
+
+            DeviceRecord messageRecord = buildRecord(currentRecord, recordBO, devId);
+            recordRepository.save(messageRecord);
 
             if (recordBO.getWS() == LiquidStatusEnum.Low.getCode() || recordBO.getWS() == LiquidStatusEnum.Height.getCode()) {
+                boolean isNotifyOfStatus = isNotifyOfStatus(currentStatus, messageRecord.getLiquidStatus());
+
                 Device device = deviceRepository.findByDevId(devId);
                 if (Objects.isNull(device)) {
                     logger.error("设备采集数据报警，未找到设备详情，devId:{}", devId);
                     return;
                 }
+
+                LocalDateTime notifyTime = LocalDateTime.now();
                 List<UserDevice> userDevices = userDeviceRepository.findUserDeviceByDevId(devId);
                 for (UserDevice userDevice : userDevices) {
                     String openid = userDevice.getOpenid();
-                    NotifyRecord notifyRecord = notifyRecordRepository.findLastByDevId(openid, devId);
-                    if (isNotify(notifyRecord)) {
-                        LocalDateTime notifyTime = LocalDateTime.now();
-                        boolean sendResult = wechatService.sendMessage(openid, buildData(device, notifyTime, recordBO.getWS()));
+                    boolean isNotify = isNotifyOfStatus;
+
+                    if (!isNotifyOfStatus) {
+                        NotifyRecord notifyRecord = notifyRecordRepository.findNotifyRecordByDevIdAndOpenid(devId, openid);
+                        isNotify = isNotify(notifyRecord);
+                    }
+
+                    if (isNotify) {
+                        boolean sendResult = wechatService.sendMessage(openid, buildData(device, notifyTime, messageRecord));
                         if (sendResult) {
-                            notifyRecordRepository.save(buildNotifyRecord(notifyRecord, openid, devId, notifyTime));
+                            notifyRecordRepository.update(openid, devId, notifyTime);
                         } else {
                             logger.error("发送用户告警消息失败,openid:{}, devId:{}", openid, userDevice.getDevId());
                         }
@@ -89,23 +102,15 @@ public class MqttConsumer {
         }
     }
 
-    private DeviceRecord buildRecord(RecordBO recordBO, String devId) {
+    private DeviceRecord buildRecord(DeviceRecord currentRecord, RecordBO recordBO, String devId) {
         DeviceRecord record = new DeviceRecord();
         record.setDevId(devId);
         record.setLiquidHeight((int) (recordBO.getX() * 100));
         record.setLiquidPercent((int) (recordBO.getWater() * 100));
         record.setLiquidStatus(recordBO.getWS());
         record.setCreateTime(LocalDateTime.now());
-        return record;
-    }
-
-    private NotifyRecord buildNotifyRecord(NotifyRecord notifyRecord, String openid, String devId, LocalDateTime notifyTime) {
-        NotifyRecord record = new NotifyRecord();
-        record.setOpenid(openid);
-        record.setDevId(devId);
-        record.setNotifyTime(notifyTime);
-        if (Objects.nonNull(notifyRecord)) {
-            notifyRecord.setId(notifyRecord.getId());
+        if (Objects.nonNull(currentRecord)) {
+            record.setId(currentRecord.getId());
         }
         return record;
     }
@@ -118,12 +123,25 @@ public class MqttConsumer {
         return currentTime.minusHours(2).isAfter(notifyRecord.getNotifyTime());
     }
 
-    private Map<String, MessageData> buildData(Device device, LocalDateTime time, int status) {
+    /**
+     * 采集设备状态（正常液位除外）和上次不一致就报警，如果一致且采集到的是低液位或者高液位，2小时内不报警，超过2小时需要报警
+     * @param currentStatus 数据库当前状态
+     * @param messageStatus 采集到的状态
+     * @return true:告警，false：是否告警需要再查看上次通知是否在2小时内
+     */
+    private boolean isNotifyOfStatus(Integer currentStatus, Integer messageStatus) {
+        if (Objects.isNull(currentStatus) || !currentStatus.equals(messageStatus)) {
+            return true;
+        }
+        return false;
+    }
+
+    private Map<String, MessageData> buildData(Device device, LocalDateTime time, DeviceRecord messageRecord) {
         Map<String, MessageData> map = new HashMap<>();
         map.put("thing2", new MessageData(device.getDevName()));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         map.put("time4", new MessageData(time.format(dateFormatter)));
-        String desc = LiquidStatusEnum.getStatusDesc(status);
+        String desc = LiquidStatusEnum.getStatusDesc(messageRecord.getLiquidStatus());
         map.put("thing5", new MessageData(desc));
         return map;
     }

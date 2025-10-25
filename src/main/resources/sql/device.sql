@@ -26,7 +26,7 @@ CREATE TABLE `device_record` (
 `liquid_status` tinyint(1) NOT NULL COMMENT '液位状态 0 正常， 1，低液位报警， 2，高液位报警',
 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
 PRIMARY KEY (`id`),
-INDEX idx_dev_id_create_time(`dev_id`,`create_time`)
+INDEX idx_dev_id(`dev_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 

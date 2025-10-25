@@ -24,4 +24,7 @@ public interface DeviceRecordRepository extends JpaRepository<DeviceRecord, Long
     @Query(value = "select dev_id as devId, avg(liquid_height) as liquidHeight from device_record where dev_id = :devId and create_time >=:startTime and create_time < :endTime", nativeQuery = true)
     Tuple findAvgDeviceRecord(@Param("devId") String devId, @Param("startTime") String startTime, @Param("endTime") String endTime);
 
+    DeviceRecord findDeviceRecordByDevId(@Param("devId") String devId);
+
+
 }
