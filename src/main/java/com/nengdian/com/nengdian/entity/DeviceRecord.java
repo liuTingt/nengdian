@@ -39,7 +39,7 @@ public class DeviceRecord {
      * 创建时间
      */
     @CreatedDate
-    @Column(name = "create_time", nullable = false, updatable = false)
+    @Column(name = "create_time", nullable = false)
     private LocalDateTime createTime;
 
     public Long getId() {

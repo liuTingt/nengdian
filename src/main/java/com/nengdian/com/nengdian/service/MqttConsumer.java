@@ -82,16 +82,19 @@ public class MqttConsumer {
                 for (UserDevice userDevice : userDevices) {
                     String openid = userDevice.getOpenid();
                     boolean isNotify = isNotifyOfStatus;
-
+                    NotifyRecord notifyRecord = notifyRecordRepository.findNotifyRecordByDevIdAndOpenid(devId, openid);
                     if (!isNotifyOfStatus) {
-                        NotifyRecord notifyRecord = notifyRecordRepository.findNotifyRecordByDevIdAndOpenid(devId, openid);
                         isNotify = isNotify(notifyRecord);
                     }
 
                     if (isNotify) {
                         boolean sendResult = wechatService.sendMessage(openid, buildData(device, notifyTime, messageRecord));
                         if (sendResult) {
-                            notifyRecordRepository.update(openid, devId, notifyTime);
+                            if (Objects.isNull(notifyRecord)) {
+                                notifyRecordRepository.save(buildNotifyRecord(openid, devId, notifyTime));
+                            } else {
+                                notifyRecordRepository.update(openid, devId, notifyTime);
+                            }
                         } else {
                             logger.error("发送用户告警消息失败,openid:{}, devId:{}", openid, userDevice.getDevId());
                         }
@@ -124,6 +127,14 @@ public class MqttConsumer {
         }
         LocalDateTime currentTime = LocalDateTime.now();
         return currentTime.minusHours(2).isAfter(notifyRecord.getNotifyTime());
+    }
+
+    private NotifyRecord buildNotifyRecord(String openid, String devId, LocalDateTime notifyTime) {
+        NotifyRecord record = new NotifyRecord();
+        record.setOpenid(openid);
+        record.setDevId(devId);
+        record.setNotifyTime(notifyTime);
+        return record;
     }
 
     /**

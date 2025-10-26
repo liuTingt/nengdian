@@ -27,7 +27,7 @@ public class NotifyRecord {
      * 通知时间
      */
     @CreatedDate
-    @Column(name = "notify_time", nullable = false, updatable = false)
+    @Column(name = "notify_time", nullable = false)
     private LocalDateTime notifyTime;
 
     public long getId() {

@@ -2,9 +2,11 @@ package com.nengdian.com.nengdian.dao;
 
 import com.nengdian.com.nengdian.entity.NotifyRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 public interface NotifyRecordRepository extends JpaRepository<NotifyRecord, Long> {
@@ -15,6 +17,8 @@ public interface NotifyRecordRepository extends JpaRepository<NotifyRecord, Long
 
     NotifyRecord findNotifyRecordByDevIdAndOpenid(String devId, String openid);
 
+    @Modifying
+    @Transactional
     @Query(value = "update notify_record set notify_time=:notifyTime where  openid=:openid and dev_id=:devId", nativeQuery = true)
-    NotifyRecord update(@Param("openid") String openid, @Param("devId") String devId, @Param("notifyTime") LocalDateTime notifyTime);
+    int update(@Param("openid") String openid, @Param("devId") String devId, @Param("notifyTime") LocalDateTime notifyTime);
 }
