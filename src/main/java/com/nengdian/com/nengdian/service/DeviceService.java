@@ -2,6 +2,7 @@ package com.nengdian.com.nengdian.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.nengdian.com.nengdian.ao.QueryDeviceAO;
 import com.nengdian.com.nengdian.ao.QueryDevicePageAO;
 import com.nengdian.com.nengdian.ao.SettingAO;
@@ -36,10 +37,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -66,9 +64,9 @@ public class DeviceService {
         }
         List<UserDevice> userDevices = userDeviceRepository.findUserDeviceByOpenid(openid);
 
-        List<String> deviceIds = userDevices.stream()
+        Set<String> deviceIds = userDevices.stream()
                 .map(UserDevice::getDevId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         List<DeviceRecord> deviceRecords = findLatestByDeviceIds(deviceIds);
         if (CollectionUtils.isEmpty(deviceRecords)) {
@@ -200,9 +198,9 @@ public class DeviceService {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
 
-        List<String> deviceIds = devices.stream()
+        Set<String> deviceIds = devices.stream()
                 .map(Device::getDevId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         List<DeviceRecord> deviceRecords = findLatestByDeviceIds(deviceIds);
 
         if (CollectionUtils.isEmpty(deviceRecords)) {
@@ -255,7 +253,7 @@ public class DeviceService {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE);
         }
 
-        List<DeviceRecord> records = findLatestByDeviceIds(Lists.newArrayList(request.getDevId()));
+        List<DeviceRecord> records = findLatestByDeviceIds(Sets.newHashSet(request.getDevId()));
         if (CollectionUtils.isEmpty(records)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE_RECORD);
         }
@@ -328,15 +326,16 @@ public class DeviceService {
         return page;
     }
 
-    public List<DeviceRecord> findLatestByDeviceIds(List<String> deviceIds) {
-        List<DeviceRecord> list = Lists.newArrayList();
-        for (String deviceId: deviceIds) {
-            DeviceRecord record = deviceRecordRepository.findLatestByDeviceId(deviceId);
-            if (Objects.nonNull(record)) {
-                list.add(record);
-            }
-        }
-        return list;
+    public List<DeviceRecord> findLatestByDeviceIds(Set<String> deviceIds) {
+        return deviceRecordRepository.findByDeviceIds(deviceIds);
+//        List<DeviceRecord> list = Lists.newArrayList();
+//        for (String deviceId: deviceIds) {
+//            DeviceRecord record = deviceRecordRepository.findLatestByDeviceId(deviceId);
+//            if (Objects.nonNull(record)) {
+//                list.add(record);
+//            }
+//        }
+//        return list;
     }
 
     private DeviceSettingVO buildDeviceDetail(Device device, User user) {

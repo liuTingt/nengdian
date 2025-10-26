@@ -39,10 +39,10 @@ public class DevController {
             DevCountVO devCountVO = deviceService.getDeviceCount(openid);
             return ResultResponse.success(devCountVO);
         } catch (BizException e) {
-            logger.error("setting biz error, openid:{}", openid, e);
+            logger.error("count biz error, openid:{}", openid, e);
             return ResultResponse.failed(e);
         } catch (Exception e) {
-            logger.error("setting error, openid:{}", openid, e);
+            logger.error("count error, openid:{}", openid, e);
             return ResultResponse.failed();
         }
     }

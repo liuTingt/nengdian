@@ -31,6 +31,9 @@ import java.util.Objects;
 @Service
 public class MqttConsumer {
     private static final Logger logger = LoggerFactory.getLogger(MqttConsumer.class);
+
+    private static final String alarmTmp = "当前液位高度%s米，%s";
+
     @Resource
     private DeviceRecordRepository recordRepository;
     @Resource
@@ -141,12 +144,19 @@ public class MqttConsumer {
         map.put("thing2", new MessageData(device.getDevName()));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         map.put("time4", new MessageData(time.format(dateFormatter)));
-        String desc = LiquidStatusEnum.getStatusDesc(messageRecord.getLiquidStatus());
-        map.put("thing5", new MessageData(desc));
+
+        String status = LiquidStatusEnum.getStatusDesc(messageRecord.getLiquidStatus());
+        double height = (double) messageRecord.getLiquidHeight() / 100;
+
+        map.put("thing5", new MessageData(String.format(alarmTmp, height, status)));
         return map;
     }
 
     public static void main(String[] args) {
+        String status = LiquidStatusEnum.getStatusDesc(1);
+        double height = (double) 1200 / 100;
+        System.out.println(String.format(alarmTmp, height, status));
+
         System.out.println(JSONObject.toJSONString(new MessageData("desc")));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime currentTime = LocalDateTime.now();
