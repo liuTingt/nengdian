@@ -1,6 +1,7 @@
 package com.nengdian.com.nengdian.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.nengdian.com.nengdian.bo.MessageData;
 import com.nengdian.com.nengdian.bo.RecordBO;
 import com.nengdian.com.nengdian.common.BizException;
@@ -36,6 +37,8 @@ public class MqttConsumer {
 
     private static final String stringPayload = "mqtt subscribe successful";
 
+    private List<String> testDevices = Lists.newArrayList("F4650BEB620A","F4650BEB7006","F4650B5C5C86","2043A8F53B0A");
+
     @Resource
     private DeviceRecordRepository recordRepository;
     @Resource
@@ -50,18 +53,7 @@ public class MqttConsumer {
 
     public void consumer(Message message) {
         try {
-            String payload = message.getPayload().toString();
-            if (Strings.isBlank(payload) || stringPayload.equals(payload)) {
-                return;
-            }
-
             logger.info("处理MQTT消息,record:{}", JSONObject.toJSON(message));
-            RecordBO recordBO = JSONObject.parseObject(payload, RecordBO.class);
-            if (Strings.isBlank(recordBO.getNET()) || Objects.isNull(recordBO.getF()) ||
-                    Strings.isBlank(recordBO.getWater()) || Objects.isNull(recordBO.getI()) ||
-                    !"4G".equals(recordBO.getNET())) {
-                return;
-            }
 
             String topic = "";
             if (!Objects.isNull(message.getHeaders().get(MqttHeaders.TOPIC))) {
@@ -70,8 +62,13 @@ public class MqttConsumer {
             if (!Objects.isNull(message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC))) {
                 topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
             }
-
             String devId = topic.split("/")[0];
+            if (!isDeal(devId, message)) {
+                return;
+            }
+
+            RecordBO recordBO = JSONObject.parseObject(message.getPayload().toString(), RecordBO.class);
+
             DeviceRecord currentRecord = recordRepository.findDeviceRecordByDevId(devId);
             Integer currentStatus = Objects.nonNull(currentRecord) ? currentRecord.getLiquidStatus() : null;
 
@@ -116,6 +113,25 @@ public class MqttConsumer {
         } catch (Exception e) {
             logger.error("处理MQTT消息异常,record:{}", JSONObject.toJSON(message), e);
         }
+    }
+
+    private boolean isDeal(String devId, Message message) {
+        if (testDevices.contains(devId)) {
+            return true;
+        }
+
+        String payload = message.getPayload().toString();
+        if (Strings.isBlank(payload) || stringPayload.equals(payload)) {
+            return false;
+        }
+
+        RecordBO recordBO = JSONObject.parseObject(payload, RecordBO.class);
+        if (Strings.isBlank(recordBO.getNET()) || Objects.isNull(recordBO.getF()) ||
+                Strings.isBlank(recordBO.getWater()) || Objects.isNull(recordBO.getI()) ||
+                !"4G".equals(recordBO.getNET())) {
+            return false;
+        }
+        return true;
     }
 
     private DeviceRecord buildRecord(DeviceRecord currentRecord, RecordBO recordBO, String devId) {

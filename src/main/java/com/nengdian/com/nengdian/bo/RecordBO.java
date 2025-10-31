@@ -38,10 +38,10 @@ public class RecordBO {
     private String NET;
 
     @JSONField(name = "F")
-    private Integer F;
+    private Double F;
 
     @JSONField(name = "I")
-    private Integer I;
+    private Double I;
 
     public double getX() {
         return X;
@@ -91,19 +91,19 @@ public class RecordBO {
         this.NET = NET;
     }
 
-    public Integer getF() {
+    public Double getF() {
         return F;
     }
 
-    public void setF(Integer f) {
+    public void setF(Double f) {
         F = f;
     }
 
-    public Integer getI() {
+    public Double getI() {
         return I;
     }
 
-    public void setI(Integer i) {
+    public void setI(Double i) {
         I = i;
     }
 }
