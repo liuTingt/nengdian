@@ -35,7 +35,7 @@
             <!-- 日志文件最大尺寸 -->
             <maxFileSize>10MB</maxFileSize>
             <!--日志文件保留天数-->
-            <MaxHistory>5</MaxHistory>
+            <MaxHistory>4</MaxHistory>
         </rollingPolicy>
         <!-- 日志输出编码格式化 -->
         <encoder>
@@ -55,7 +55,7 @@
         <file>${LOG_PATH}/${APPLICATION_NAME}/error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${APPLICATION_NAME}/%d{yyyy-MM-dd}/error.log</fileNamePattern>
-            <maxHistory>5</maxHistory>
+            <maxHistory>4</maxHistory>
             <totalSizeCap>10MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
@@ -81,7 +81,7 @@
             <!-- 日志文件最大尺寸 -->
             <maxFileSize>10MB</maxFileSize>
             <!--日志文件保留天数-->
-            <MaxHistory>5</MaxHistory>
+            <MaxHistory>4</MaxHistory>
         </rollingPolicy>
         <!-- 日志输出编码格式化 -->
         <encoder>
