@@ -37,7 +37,7 @@ public class MqttConsumer {
 
     private static final String stringPayload = "mqtt subscribe successful";
 
-    private List<String> testDevices = Lists.newArrayList("F4650BEB620A","F4650BEB7006","F4650B5C5C86","2043A8F53B0A");
+    private List<String> testDevices = Lists.newArrayList("f4650beb620a","f4650beb7006","f4650b5c5c86","2043a8f53b0a");
 
     @Resource
     private DeviceRecordRepository recordRepository;
@@ -192,6 +192,8 @@ public class MqttConsumer {
     }
 
     public static void main(String[] args) {
+        List<String> ss = Lists.newArrayList("F4650b5bbaa6");
+        System.out.println(ss.contains("f4650b5bbaa6"));
         String status = LiquidStatusEnum.getStatusDesc(1);
         double height = (double) 1200 / 100;
         System.out.println(String.format(alarmTmp, height, status));
