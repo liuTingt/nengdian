@@ -1,8 +1,11 @@
 package com.nengdian.com.nengdian.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Maps;
 import com.nengdian.com.nengdian.bo.*;
 import com.nengdian.com.nengdian.common.BizException;
+import com.nengdian.com.nengdian.common.CommonConstant;
 import com.nengdian.com.nengdian.common.HttpUtil;
 import com.nengdian.com.nengdian.common.ResultCodeEnum;
 import com.nengdian.com.nengdian.entity.User;
@@ -14,13 +17,17 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.Cache;
 
 @Service
 public class WechatService {
     private static final Logger logger = LoggerFactory.getLogger(WechatService.class);
 
     private static final String login_url = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-    private static final String access_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&force_refresh=false&appid=%s&secret=%s";
+    private static final String access_token_url = "https://api.weixin.qq.com/cgi-bin/stable_token";
+//    private static final String access_token_url = "https://api.weixin.qq.com/cgi-bin/stable_token?grant_type=client_credential&force_refresh=true&appid=%s&secret=%s";
     private static final String message_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";
 //    private static final String message_url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/bizsend?access_token=%s";
 
@@ -50,6 +57,14 @@ public class WechatService {
     @Resource
     private UserService userService;
 
+    public Cache<String, String> cache = CacheBuilder.newBuilder()
+            .expireAfterWrite(100, TimeUnit.MINUTES)
+            .maximumSize(100)
+            .removalListener(removalNotification -> {
+                logger.info("cache remove reason:{}", removalNotification.getCause());
+            })
+            .build();
+
 
     public User login(String code) {
         String url = String.format(login_url, appid, app_secret, code);
@@ -68,9 +83,25 @@ public class WechatService {
     }
 
     public String getAccessToken() {
+        logger.info("获取accessToken请求");
+        String token = cache.getIfPresent(CommonConstant.CACHE_ACCESS_TOKEN_KEY);
+        if (Strings.isBlank(token)) {
+            token = queryAccessToken();
+            if (Strings.isNotBlank(token)) {
+                cache.put(CommonConstant.CACHE_ACCESS_TOKEN_KEY, token);
+            }
+        }
+        return token;
+    }
+
+    public String queryAccessToken() {
         try {
             String url = String.format(access_token_url, service_appid, service_app_secret);
-            AccessTokenRes response = httpUtil.doGet(url, AccessTokenRes.class);
+            Map<String, String> param = Maps.newHashMap();
+            param.put("grant_type","client_credential");
+            param.put("appid",service_appid);
+            param.put("secret",service_app_secret);
+            AccessTokenRes response = httpUtil.doPostByJson(url, JSONObject.toJSONString(param), AccessTokenRes.class);
             logger.info("获取accessToken，response:{}", JSONObject.toJSONString(response));
             if (response.isSuccess()) {
                 return response.getAccess_token();
@@ -101,7 +132,8 @@ public class WechatService {
             String url = String.format(message_url, token);
 
             MessageRes response = httpUtil.doPostByJson(url, JSONObject.toJSONString(sendMessage), MessageRes.class);
-            logger.info("发送订阅消息，openid:{}, serviceOpenid:{}, response:{}", openid, user.getServiceOpenid(), JSONObject.toJSONString(response));
+            logger.info("发送订阅消息，openid:{}, serviceOpenid:{}, message:{}, response:{}",
+                    openid, user.getServiceOpenid(), JSONObject.toJSONString(sendMessage), JSONObject.toJSONString(response));
             return response.isSuccess();
         } catch (BizException e) {
             logger.error("发送消息业务异常", e);

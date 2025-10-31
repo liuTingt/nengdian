@@ -2,6 +2,8 @@ package com.nengdian.com.nengdian.bo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 public class RecordBO {
     /**
      * 上报的液位高度
@@ -12,7 +14,7 @@ public class RecordBO {
      * 上报的液位百分比
      */
     @JSONField(name = "water")
-    private double water;
+    private String water;
     /**
      * 液位状态 1 ~ 3 ，
      * 0 正常， 1，低液位报警， 2，高液位报警
@@ -32,6 +34,15 @@ public class RecordBO {
     @JSONField(name = "XX")
     private int XX;
 
+    @JSONField(name = "NET")
+    private String NET;
+
+    @JSONField(name = "F")
+    private Integer F;
+
+    @JSONField(name = "I")
+    private Integer I;
+
     public double getX() {
         return X;
     }
@@ -40,11 +51,11 @@ public class RecordBO {
         X = x;
     }
 
-    public double getWater() {
+    public String getWater() {
         return water;
     }
 
-    public void setWater(double water) {
+    public void setWater(String water) {
         this.water = water;
     }
 
@@ -70,5 +81,29 @@ public class RecordBO {
 
     public void setXX(int XX) {
         this.XX = XX;
+    }
+
+    public String getNET() {
+        return NET;
+    }
+
+    public void setNET(String NET) {
+        this.NET = NET;
+    }
+
+    public Integer getF() {
+        return F;
+    }
+
+    public void setF(Integer f) {
+        F = f;
+    }
+
+    public Integer getI() {
+        return I;
+    }
+
+    public void setI(Integer i) {
+        I = i;
     }
 }

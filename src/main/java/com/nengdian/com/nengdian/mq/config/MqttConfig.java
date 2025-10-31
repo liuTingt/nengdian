@@ -90,10 +90,10 @@ public class MqttConfig {
                 new MqttPahoMessageDrivenChannelAdapter(
                         inClientId,
                         mqttClientFactory,
-                        "1c69203e57fa/service/post","f4650b5bbaa6/service/post");
-//                        "03aa2c178bf0/service/post","1c69203e57fa/service/post","1c69203fbafa/service/post",
-//                        "430818019ddd/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post");
-//                        "+/service/post"); // 订阅主题通配符 +来表示单一层级。#：多层级
+//                        "1c69203e57fa/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post");
+//                        "03aa2c178bf0/service/post","1c69203e57fa/service/post","1c69203fbafa/service/post", "430818019ddd/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post",
+//                        "f4650beb611a/service/post", "1c69203e5956/service/post", "1c69203e59ea/service/post", "f4650beb6076/service/post", "f4650b5c820a/service/post", "1c6920f38cf2/service/post");
+                        "+/service/post"); // 订阅主题通配符 +来表示单一层级。#：多层级
         adapter.setCompletionTimeout(5000);
 
         DefaultPahoMessageConverter converter = new DefaultPahoMessageConverter();

@@ -34,6 +34,8 @@ public class MqttConsumer {
 
     private static final String alarmTmp = "当前液位高度%s米，%s";
 
+    private static final String stringPayload = "mqtt subscribe successful";
+
     @Resource
     private DeviceRecordRepository recordRepository;
     @Resource
@@ -49,10 +51,18 @@ public class MqttConsumer {
     public void consumer(Message message) {
         try {
             String payload = message.getPayload().toString();
-            if (Strings.isBlank(payload)) {
+            if (Strings.isBlank(payload) || stringPayload.equals(payload)) {
                 return;
             }
+
+            logger.info("处理MQTT消息,record:{}", JSONObject.toJSON(message));
             RecordBO recordBO = JSONObject.parseObject(payload, RecordBO.class);
+            if (Strings.isBlank(recordBO.getNET()) || Objects.isNull(recordBO.getF()) ||
+                    Strings.isBlank(recordBO.getWater()) || Objects.isNull(recordBO.getI()) ||
+                    !"4G".equals(recordBO.getNET())) {
+                return;
+            }
+
             String topic = "";
             if (!Objects.isNull(message.getHeaders().get(MqttHeaders.TOPIC))) {
                 topic = message.getHeaders().get(MqttHeaders.TOPIC).toString();
@@ -112,7 +122,9 @@ public class MqttConsumer {
         DeviceRecord record = new DeviceRecord();
         record.setDevId(devId);
         record.setLiquidHeight((int) (recordBO.getX() * 100));
-        record.setLiquidPercent((int) (recordBO.getWater() * 100));
+
+        double water = Double.parseDouble(recordBO.getWater());
+        record.setLiquidPercent((int) (water * 100));
         record.setLiquidStatus(recordBO.getWS());
         record.setCreateTime(LocalDateTime.now());
         if (Objects.nonNull(currentRecord)) {
