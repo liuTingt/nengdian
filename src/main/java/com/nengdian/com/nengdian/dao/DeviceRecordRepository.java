@@ -11,12 +11,12 @@ import java.util.Set;
 
 public interface DeviceRecordRepository extends JpaRepository<DeviceRecord, Long> {
 
-    @Query(value = "select dr from DeviceRecord dr where dr.devId in :deviceIds " +
-            "and dr.createTime = (select Max(dr2.createTime) from DeviceRecord dr2 where dr2.devId = dr.devId)")
-    List<DeviceRecord> findLatestByDeviceIds(@Param("deviceIds") List<String> deviceIds);
+//    @Query(value = "select dr from DeviceRecord dr where dr.devId in :deviceIds " +
+//            "and dr.createTime = (select Max(dr2.createTime) from DeviceRecord dr2 where dr2.devId = dr.devId)")
+//    List<DeviceRecord> findLatestByDeviceIds(@Param("deviceIds") List<String> deviceIds);
 
-    @Query(value = "select * from device_record  where dev_id = :devId desc limit 1", nativeQuery = true)
-    DeviceRecord findLatestByDeviceId(@Param("devId") String devId);
+//    @Query(value = "select * from device_record  where dev_id = :devId desc limit 1", nativeQuery = true)
+//    DeviceRecord findLatestByDeviceId(@Param("devId") String devId);
 
     @Query(value = "select * from device_record  where dev_id IN :devIds", nativeQuery = true)
     List<DeviceRecord> findByDeviceIds(@Param("devIds") Set<String> devIds);

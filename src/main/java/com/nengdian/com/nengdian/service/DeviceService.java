@@ -95,6 +95,11 @@ public class DeviceService {
             device.setDevId(lowDevId);
             device.setCreateTime(new Date());
 
+            DeviceRecord deviceRecord = deviceRecordRepository.findDeviceRecordByDevId(device.getDevId());
+            if (Objects.isNull(deviceRecord)) {
+                throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE_RECORD);
+            }
+
             Device currentDevice = deviceRepository.findByDevId(device.getDevId());
             if (Objects.isNull(currentDevice)) {
                 if (Strings.isBlank(device.getDevName())) {

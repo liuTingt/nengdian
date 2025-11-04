@@ -44,9 +44,10 @@ public class MqttConfig {
         mqttConnectOptions.setKeepAliveInterval(60);
 
         mqttConnectOptions.setAutomaticReconnect(true);      // 启用自动重连
-        mqttConnectOptions.setMaxReconnectDelay(30000);     // 最大重连延迟30秒
-        mqttConnectOptions.setConnectionTimeout(30);        // 连接超时30秒
-        mqttConnectOptions.setCleanSession(false);          // 保持会话状态
+        mqttConnectOptions.setMaxReconnectDelay(30);     // 最大重连延迟30秒
+        mqttConnectOptions.setConnectionTimeout(60);        // 连接超时30秒
+//        mqttConnectOptions.setCleanSession(false);          // 保持会话状态
+//        mqttConnectOptions.setMaxInflight(); // 调整并发消息数量
         return mqttConnectOptions;
     }
 
@@ -101,6 +102,7 @@ public class MqttConfig {
         adapter.setConverter(converter);
         adapter.setQos(1);
         adapter.setOutputChannel(mqttInputChannel());
+        adapter.setAutoStartup(true);
         return adapter;
     }
 

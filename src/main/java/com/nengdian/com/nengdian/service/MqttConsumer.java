@@ -53,7 +53,7 @@ public class MqttConsumer {
 
     public void consumer(Message message) {
         try {
-            logger.info("处理MQTT消息,record:{}", JSONObject.toJSON(message));
+//            logger.info("处理MQTT消息,record:{}", JSONObject.toJSON(message));
 
             String topic = "";
             if (!Objects.isNull(message.getHeaders().get(MqttHeaders.TOPIC))) {
@@ -116,16 +116,16 @@ public class MqttConsumer {
     }
 
     private boolean isDeal(String devId, Message message) {
-        if (testDevices.contains(devId)) {
-            return true;
-        }
-
         String payload = message.getPayload().toString();
         if (Strings.isBlank(payload) || stringPayload.equals(payload)) {
             return false;
         }
 
         RecordBO recordBO = JSONObject.parseObject(payload, RecordBO.class);
+        if (testDevices.contains(devId) && Strings.isNotBlank(recordBO.getWater())) {
+            return true;
+        }
+
         if (Strings.isBlank(recordBO.getNET()) || Objects.isNull(recordBO.getF()) ||
                 Strings.isBlank(recordBO.getWater()) || Objects.isNull(recordBO.getI()) ||
                 !"4G".equals(recordBO.getNET())) {
@@ -192,8 +192,6 @@ public class MqttConsumer {
     }
 
     public static void main(String[] args) {
-        List<String> ss = Lists.newArrayList("F4650b5bbaa6");
-        System.out.println(ss.contains("f4650b5bbaa6"));
         String status = LiquidStatusEnum.getStatusDesc(1);
         double height = (double) 1200 / 100;
         System.out.println(String.format(alarmTmp, height, status));
