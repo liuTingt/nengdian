@@ -2,10 +2,12 @@ package com.nengdian.com.nengdian.dao;
 
 import com.nengdian.com.nengdian.entity.DeviceRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.persistence.Tuple;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -26,5 +28,9 @@ public interface DeviceRecordRepository extends JpaRepository<DeviceRecord, Long
 
     DeviceRecord findDeviceRecordByDevId(@Param("devId") String devId);
 
+    @Modifying
+    @Transactional
+    @Query("update DeviceRecord d set d.liquidStatus = 3 where d.devId = :devId")
+    int offline(@Param("devId") String devId);
 
 }

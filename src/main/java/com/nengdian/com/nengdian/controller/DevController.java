@@ -104,7 +104,7 @@ public class DevController {
     @ResponseBody
     public ResultResponse<List<DeviceDetailVO>> list(@RequestBody QueryDeviceAO request) {
         try {
-            logger.info("查询设备列表,request:{}", JSONObject.toJSON(request));
+//            logger.info("查询设备列表,request:{}", JSONObject.toJSON(request));
             List<DeviceDetailVO> devices = deviceService.queryList(request);
             return ResultResponse.success(devices);
         } catch (BizException e) {

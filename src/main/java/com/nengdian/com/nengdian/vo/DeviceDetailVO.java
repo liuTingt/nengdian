@@ -2,12 +2,17 @@ package com.nengdian.com.nengdian.vo;
 
 import com.nengdian.com.nengdian.entity.Device;
 
+
 public class DeviceDetailVO extends Device {
 
     /**
      * 液位百分比
      */
     private Integer liquidPercent;
+    /**
+     * 设备状态
+     */
+    private String status;
 
 
     public Integer getLiquidPercent() {
@@ -16,6 +21,14 @@ public class DeviceDetailVO extends Device {
 
     public void setLiquidPercent(Integer liquidPercent) {
         this.liquidPercent = liquidPercent;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DeviceDetailVO() {

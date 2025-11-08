@@ -4,6 +4,7 @@ public enum LiquidStatusEnum {
     Normal(0, "正常"),
     Low(1, "液位过低"),
     Height(2, "液位过高"),
+    Offline(3, "离线"),
     ;
 
     private Integer code;
@@ -28,6 +29,6 @@ public enum LiquidStatusEnum {
                 return statusEnum.getDesc();
             }
         }
-        return null;
+        return "离线";
     }
 }

@@ -23,6 +23,10 @@ public class DeviceLiquidLevelVO {
      * 0 正常， 1，低液位报警， 2，高液位报警
      */
     private Integer liquidStatus;
+    /**
+     * 设备液位状态
+     */
+    private String status;
 
     public String getDevId() {
         return devId;
@@ -62,5 +66,13 @@ public class DeviceLiquidLevelVO {
 
     public void setLiquidStatus(Integer liquidStatus) {
         this.liquidStatus = liquidStatus;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

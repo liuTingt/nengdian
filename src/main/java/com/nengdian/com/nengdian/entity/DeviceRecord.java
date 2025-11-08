@@ -1,11 +1,11 @@
 package com.nengdian.com.nengdian.entity;
 
 
+import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "device_record")
@@ -32,7 +32,7 @@ public class DeviceRecord {
     /**
      * 液位状态
 //     * 1：低液位 2：正常 3：高液位
-     * 0 正常， 1，低液位报警， 2，高液位报警
+     * 0 正常， 1，低液位报警， 2，高液位报警，3 离线
      */
     private Integer liquidStatus;
     /**
@@ -88,5 +88,17 @@ public class DeviceRecord {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public boolean isOffline() {
+        LocalDateTime offlineTime = this.createTime.plusMinutes(2);
+        return LocalDateTime.now().isAfter(offlineTime);
+    }
+
+    public String getStatus() {
+//        if (isOffline()) {
+//            return "离线";
+//        }
+        return LiquidStatusEnum.getStatusDesc(this.getLiquidStatus());
     }
 }

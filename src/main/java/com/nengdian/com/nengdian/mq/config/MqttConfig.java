@@ -15,6 +15,8 @@ import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.util.UUID;
+
 @Configuration
 public class MqttConfig {
 
@@ -44,10 +46,10 @@ public class MqttConfig {
         mqttConnectOptions.setKeepAliveInterval(60);
 
         mqttConnectOptions.setAutomaticReconnect(true);      // 启用自动重连
-        mqttConnectOptions.setMaxReconnectDelay(30);     // 最大重连延迟30秒
+        mqttConnectOptions.setMaxReconnectDelay(30000);     // 最大重连延迟30秒
         mqttConnectOptions.setConnectionTimeout(60);        // 连接超时30秒
-//        mqttConnectOptions.setCleanSession(false);          // 保持会话状态
-//        mqttConnectOptions.setMaxInflight(); // 调整并发消息数量
+        mqttConnectOptions.setCleanSession(false);          // 保持会话状态
+        mqttConnectOptions.setMaxInflight(50); // 调整并发消息数量
         return mqttConnectOptions;
     }
 
@@ -87,9 +89,10 @@ public class MqttConfig {
 
     @Bean
     public MessageProducer inbound(MqttPahoClientFactory mqttClientFactory) {
+        String clientId = "stable-client-" + System.currentTimeMillis();
         MqttPahoMessageDrivenChannelAdapter adapter =
                 new MqttPahoMessageDrivenChannelAdapter(
-                        inClientId,
+                        clientId,
                         mqttClientFactory,
 //                        "1c69203e57fa/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post");
 //                        "03aa2c178bf0/service/post","1c69203e57fa/service/post","1c69203fbafa/service/post", "430818019ddd/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post",
@@ -100,10 +103,18 @@ public class MqttConfig {
         DefaultPahoMessageConverter converter = new DefaultPahoMessageConverter();
         converter.setPayloadAsBytes(false);
         adapter.setConverter(converter);
-        adapter.setQos(1);
+        adapter.setQos(2); //消息正好送达一次，无重复
         adapter.setOutputChannel(mqttInputChannel());
         adapter.setAutoStartup(true);
+        adapter.setRecoveryInterval(15000); // 重连间隔
+//        adapter.setErrorChannel(errorChannel());
+
         return adapter;
+    }
+
+    @Bean
+    public MessageChannel errorChannel() {
+        return new DirectChannel();
     }
 
 }

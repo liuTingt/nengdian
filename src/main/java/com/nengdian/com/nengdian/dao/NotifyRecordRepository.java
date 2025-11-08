@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface NotifyRecordRepository extends JpaRepository<NotifyRecord, Long> {
 
@@ -16,6 +17,8 @@ public interface NotifyRecordRepository extends JpaRepository<NotifyRecord, Long
     NotifyRecord findLastByDevId(@Param("openid") String openid, @Param("devId") String devId);
 
     NotifyRecord findNotifyRecordByDevIdAndOpenid(String devId, String openid);
+
+    List<NotifyRecord> findNotifyRecordByDevId(String devId);
 
     @Modifying
     @Transactional

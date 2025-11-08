@@ -75,12 +75,15 @@ public class DeviceService {
         }
         int alarmCount = 0;
         int normalCount = 0;
-        Map<String, Integer> deviceRecordMap = deviceRecords.stream().collect(Collectors.toMap(DeviceRecord::getDevId, DeviceRecord::getLiquidStatus));
+        Map<String, DeviceRecord> deviceRecordMap = deviceRecords.stream()
+                .collect(Collectors.toMap(DeviceRecord::getDevId, Function.identity(), (o,n) -> n));
         for (UserDevice userDevice : userDevices) {
             normalCount++;
-            Integer status = deviceRecordMap.get(userDevice.getDevId());
-            if (Objects.nonNull(status) &&
-                    (LiquidStatusEnum.Low.getCode().equals(status) || LiquidStatusEnum.Height.getCode().equals(status))) {
+            DeviceRecord record = deviceRecordMap.get(userDevice.getDevId());
+            if (Objects.isNull(record.getLiquidStatus()) ||
+                    LiquidStatusEnum.Low.getCode().equals(record.getLiquidStatus()) ||
+                    LiquidStatusEnum.Height.getCode().equals(record.getLiquidStatus()) ||
+                    LiquidStatusEnum.Offline.getCode().equals(record.getLiquidStatus())) {
                 alarmCount++;
             }
         }
@@ -226,6 +229,7 @@ public class DeviceService {
             if (Objects.nonNull(record)) {
                 DeviceDetailVO vo = new DeviceDetailVO(device);
                 vo.setLiquidPercent(record.getLiquidPercent());
+                vo.setStatus(record.getStatus());
                 result.add(vo);
             }
         }
@@ -268,6 +272,7 @@ public class DeviceService {
         result.setLiquidHeight(records.get(0).getLiquidHeight());
         result.setLiquidPercent(records.get(0).getLiquidPercent());
         result.setLiquidStatus(records.get(0).getLiquidStatus());
+        result.setStatus(records.get(0).getStatus());
         return result;
     }
 
