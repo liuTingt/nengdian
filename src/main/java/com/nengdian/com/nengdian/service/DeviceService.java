@@ -78,12 +78,13 @@ public class DeviceService {
         Map<String, DeviceRecord> deviceRecordMap = deviceRecords.stream()
                 .collect(Collectors.toMap(DeviceRecord::getDevId, Function.identity(), (o,n) -> n));
         for (UserDevice userDevice : userDevices) {
-            normalCount++;
             DeviceRecord record = deviceRecordMap.get(userDevice.getDevId());
+            if (Objects.isNull(record)) {
+                continue;
+            }
+            normalCount++;
             if (Objects.isNull(record.getLiquidStatus()) ||
-                    LiquidStatusEnum.Low.getCode().equals(record.getLiquidStatus()) ||
-                    LiquidStatusEnum.Height.getCode().equals(record.getLiquidStatus()) ||
-                    LiquidStatusEnum.Offline.getCode().equals(record.getLiquidStatus())) {
+                    !LiquidStatusEnum.Normal.getCode().equals(record.getLiquidStatus())) {
                 alarmCount++;
             }
         }

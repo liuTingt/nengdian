@@ -54,6 +54,7 @@ public class ScheduledService {
         DeviceRecord targetRecord = new DeviceRecord();
         targetRecord.setLiquidStatus(LiquidStatusEnum.Offline.getCode());
         targetRecord.setCreateTime(LocalDateTime.now());
+        targetRecord.setLiquidHeight(0);
         return targetRecord;
     }
 }
