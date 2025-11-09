@@ -49,7 +49,7 @@ public class MqttConfig {
         mqttConnectOptions.setMaxReconnectDelay(30000);     // 最大重连延迟30秒
         mqttConnectOptions.setConnectionTimeout(60);        // 连接超时30秒
         mqttConnectOptions.setCleanSession(false);          // 保持会话状态
-        mqttConnectOptions.setMaxInflight(50); // 调整并发消息数量
+        mqttConnectOptions.setMaxInflight(5); // 调整并发消息数量
         return mqttConnectOptions;
     }
 
@@ -94,11 +94,8 @@ public class MqttConfig {
                 new MqttPahoMessageDrivenChannelAdapter(
                         clientId,
                         mqttClientFactory,
-//                        "1c69203e57fa/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post");
-//                        "03aa2c178bf0/service/post","1c69203e57fa/service/post","1c69203fbafa/service/post", "430818019ddd/service/post","f4650b5bbaa6/service/post","f4650b5d4f66/service/post",
-//                        "f4650beb611a/service/post", "1c69203e5956/service/post", "1c69203e59ea/service/post", "f4650beb6076/service/post", "f4650b5c820a/service/post", "1c6920f38cf2/service/post");
                         "+/service/post"); // 订阅主题通配符 +来表示单一层级。#：多层级
-        adapter.setCompletionTimeout(5000);
+        adapter.setCompletionTimeout(10000);//设置完成超时为10秒
 
         DefaultPahoMessageConverter converter = new DefaultPahoMessageConverter();
         converter.setPayloadAsBytes(false);
@@ -106,7 +103,7 @@ public class MqttConfig {
         adapter.setQos(2); //消息正好送达一次，无重复
         adapter.setOutputChannel(mqttInputChannel());
         adapter.setAutoStartup(true);
-        adapter.setRecoveryInterval(15000); // 重连间隔
+        adapter.setRecoveryInterval(5000); // 重连间隔5s
 //        adapter.setErrorChannel(errorChannel());
 
         return adapter;

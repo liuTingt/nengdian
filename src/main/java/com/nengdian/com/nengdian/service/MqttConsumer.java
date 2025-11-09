@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -44,7 +43,7 @@ public class MqttConsumer {
                 topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
             }
             String devId = topic.split("/")[0];
-            if (!isDeal(devId, message)) {
+            if (!isLegal(devId, message)) {
                 return;
             }
 
@@ -70,20 +69,20 @@ public class MqttConsumer {
         }
     }
 
-    private boolean isDeal(String devId, Message message) {
+    private boolean isLegal(String devId, Message message) {
         String payload = message.getPayload().toString();
         if (Strings.isBlank(payload) || stringPayload.equals(payload)) {
             return false;
         }
 
-        Map<String, String> messageMap = JSONObject.parseObject(payload, Map.class);
-        if (testDevices.contains(devId) && Strings.isBlank(messageMap.get("water"))) {
+        JSONObject jsonObject = JSONObject.parseObject(payload, JSONObject.class);
+        // 测试设备保证有water字段
+        if (testDevices.contains(devId) && Objects.nonNull(jsonObject.get("water"))) {
             return true;
         }
-
-        if (Strings.isBlank(messageMap.get("NET")) || Strings.isBlank(messageMap.get("F")) ||
-                Strings.isBlank(messageMap.get("water")) || Strings.isBlank(messageMap.get("I")) ||
-                !"4G".equals(messageMap.get("NET"))) {
+        if (Objects.isNull(jsonObject.get("NET")) || Objects.isNull(jsonObject.get("F")) ||
+                Objects.isNull(jsonObject.get("water")) || Objects.isNull(jsonObject.get("I")) ||
+                !"4G".equals(jsonObject.get("NET").toString())) {
             return false;
         }
         return true;
