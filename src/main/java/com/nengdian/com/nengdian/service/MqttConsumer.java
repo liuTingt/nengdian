@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -75,14 +76,14 @@ public class MqttConsumer {
             return false;
         }
 
-        RecordBO recordBO = JSONObject.parseObject(payload, RecordBO.class);
-        if (testDevices.contains(devId) && Strings.isNotBlank(recordBO.getWater())) {
+        Map<String, String> messageMap = JSONObject.parseObject(payload, Map.class);
+        if (testDevices.contains(devId) && Strings.isBlank(messageMap.get("water"))) {
             return true;
         }
 
-        if (Strings.isBlank(recordBO.getNET()) || Objects.isNull(recordBO.getF()) ||
-                Strings.isBlank(recordBO.getWater()) || Objects.isNull(recordBO.getI()) ||
-                !"4G".equals(recordBO.getNET())) {
+        if (Strings.isBlank(messageMap.get("NET")) || Strings.isBlank(messageMap.get("F")) ||
+                Strings.isBlank(messageMap.get("water")) || Strings.isBlank(messageMap.get("I")) ||
+                !"4G".equals(messageMap.get("NET"))) {
             return false;
         }
         return true;

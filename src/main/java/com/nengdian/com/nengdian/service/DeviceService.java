@@ -82,10 +82,14 @@ public class DeviceService {
             if (Objects.isNull(record)) {
                 continue;
             }
-            normalCount++;
+            // 报警数量，不包含正常
             if (Objects.isNull(record.getLiquidStatus()) ||
                     !LiquidStatusEnum.Normal.getCode().equals(record.getLiquidStatus())) {
                 alarmCount++;
+            }
+            // 在线设备数量：包含正常、低液位、高液位，不包含离线
+            if (!LiquidStatusEnum.Offline.getCode().equals(record.getLiquidStatus())) {
+                normalCount++;
             }
         }
         return new DevCountVO(normalCount, alarmCount, user.getLanguage());
@@ -214,6 +218,12 @@ public class DeviceService {
 
         if (CollectionUtils.isEmpty(deviceRecords)) {
             throw new BizException(ResultCodeEnum.NOT_FIND_DEVICE_RECORD);
+        }
+        // 在线设备数量：不包含离线
+        if (CollectionUtils.isEmpty(request.getStatusList())) {
+            deviceRecords = deviceRecords.stream()
+                    .filter(record -> !LiquidStatusEnum.Offline.getCode().equals(record.getLiquidStatus()))
+                    .collect(Collectors.toList());
         }
 
         if (!CollectionUtils.isEmpty(request.getStatusList())) {

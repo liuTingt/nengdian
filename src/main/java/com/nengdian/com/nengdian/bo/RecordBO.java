@@ -2,7 +2,6 @@ package com.nengdian.com.nengdian.bo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import javax.persistence.criteria.CriteriaBuilder;
 
 public class RecordBO {
     /**
@@ -26,7 +25,7 @@ public class RecordBO {
      * 高液位报警设置参数
      */
     @JSONField(name = "SX")
-    private int SX;
+    private String SX;
 
     /**
      * 高液位报警设置参数
@@ -67,11 +66,11 @@ public class RecordBO {
         this.WS = WS;
     }
 
-    public int getSX() {
+    public String getSX() {
         return SX;
     }
 
-    public void setSX(int SX) {
+    public void setSX(String SX) {
         this.SX = SX;
     }
 
