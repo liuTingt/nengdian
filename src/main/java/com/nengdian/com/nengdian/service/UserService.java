@@ -38,6 +38,7 @@ public class UserService {
                 throw new BizException(ResultCodeEnum.NOT_FIND_USER);
             }
             user.setServiceOpenid(wechatUser.getOpenid());
+            user.setModifyTime(new Date());
             return userRepository.save(user);
         } catch (BizException e) {
             logger.error("更新微信用户openid失败:{}", e.getMsg());

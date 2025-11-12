@@ -362,7 +362,7 @@ public class DeviceService {
     private DeviceSettingVO buildDeviceDetail(Device device, User user) {
         DeviceSettingVO deviceDetail = new DeviceSettingVO();
         deviceDetail.setDevId(device.getDevId());
-        deviceDetail.setOpenid(device.getOpenid());
+//        deviceDetail.setOpenid(device.getOpenid());
         deviceDetail.setDevName(device.getDevName());
         deviceDetail.setType(device.getType());
         deviceDetail.setInstallHeight(device.getInstallHeight());
