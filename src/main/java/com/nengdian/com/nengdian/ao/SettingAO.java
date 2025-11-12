@@ -32,24 +32,24 @@ public class SettingAO {
      * 单位：厘米
      * 范围0.1~2.9米之间
      */
-    private Integer installHeight = 10;
+    private Integer installHeight = 120;
     /**
      * 传感器满液位距离
      * 单位：厘米
-     * 范围最低0.1米
+     * 范围最低0.2米
      */
-    private Integer distance = 10;
+    private Integer distance = 20;
     /**
      * 上限设置
-     * 单位：百分比值，10%，存储10
+     * 单位：百分比值，10%，存储80
      * 范围10～100
      */
-    private Integer upperLimit = 10;
+    private Integer upperLimit = 80;
     /**
      * 下限设置
      * 范围0～90
      */
-    private Integer lowerLimit = 0;
+    private Integer lowerLimit = 10;
     /**
      * 低能耗开关
      * 默认开启，用户不可设置
@@ -59,7 +59,7 @@ public class SettingAO {
     /**
      * 排水模式
      */
-    private boolean drainageModel;
+    private boolean drainageModel = true;
 
     /**
      * 语言

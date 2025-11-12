@@ -13,7 +13,7 @@ public class RecordBO {
      * 上报的液位百分比
      */
     @JSONField(name = "water")
-    private String water;
+    private Double water;
     /**
      * 液位状态 1 ~ 3 ，
      * 0 正常， 1，低液位报警， 2，高液位报警
@@ -50,11 +50,11 @@ public class RecordBO {
         X = x;
     }
 
-    public String getWater() {
+    public Double getWater() {
         return water;
     }
 
-    public void setWater(String water) {
+    public void setWater(Double water) {
         this.water = water;
     }
 

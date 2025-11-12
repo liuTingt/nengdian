@@ -93,8 +93,8 @@ public class MqttConsumer {
         record.setDevId(devId);
         record.setLiquidHeight((int) (recordBO.getX() * 100));
 
-        double water = Double.parseDouble(recordBO.getWater());
-        record.setLiquidPercent((int) (water * 100));
+//        double water = Double.parseDouble(recordBO.getWater());
+        record.setLiquidPercent((int) (recordBO.getWater() * 100));
         record.setLiquidStatus(recordBO.getWS());
         record.setCreateTime(LocalDateTime.now());
         if (Objects.nonNull(currentRecord)) {
