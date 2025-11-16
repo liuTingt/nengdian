@@ -63,7 +63,7 @@ public class MqttConsumer {
             long endTime = System.currentTimeMillis();
             logger.info("处理MQTT消息耗时,查库耗时：{}，处理消息耗时：{}，总耗时:{}", (time2 - startTime), (endTime - time2), (endTime - startTime));
         } catch (BizException e) {
-            logger.error("处理MQTT消息业务异常,record:{}", JSONObject.toJSON(message), e);
+            logger.error("处理MQTT消息业务异常,record:{},error:{}", JSONObject.toJSON(message), e.getMsg());
         } catch (Exception e) {
             logger.error("处理MQTT消息异常,record:{}", JSONObject.toJSON(message), e);
         }

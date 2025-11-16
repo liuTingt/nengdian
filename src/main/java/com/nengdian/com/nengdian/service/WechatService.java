@@ -136,7 +136,7 @@ public class WechatService {
                     openid, user.getServiceOpenid(), JSONObject.toJSONString(sendMessage), JSONObject.toJSONString(response));
             return response.isSuccess();
         } catch (BizException e) {
-            logger.error("发送消息业务异常", e);
+            logger.error("发送消息业务异常,msg:{}", e.getMsg());
         } catch (Exception e) {
             logger.error("发送消息异常", e);
         }

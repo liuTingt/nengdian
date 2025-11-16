@@ -51,6 +51,7 @@ public class DevController {
     @ResponseBody
     public ResultResponse<Device> create(@Valid @RequestBody Device device) {
         try {
+            logger.info("新增设备,devId:{},openid:{}", device.getDevId(), device.getOpenid());
             Device result = deviceService.create(device);
             return ResultResponse.success(result);
         } catch (BizException e) {

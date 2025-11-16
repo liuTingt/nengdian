@@ -70,8 +70,8 @@ public class AlterNotifyService {
                 }
             }
         } catch (BizException e) {
-            logger.error("处理MQTT消息业务异常,record:{},targetRecord:{}",
-                    JSONObject.toJSONString(currentRecord), JSONObject.toJSONString(targetRecord), e);
+            logger.error("处理MQTT消息业务异常,record:{},targetRecord:{},error:{}",
+                    JSONObject.toJSONString(currentRecord), JSONObject.toJSONString(targetRecord), e.getMsg());
         } catch (Exception e) {
             logger.error("告警通知异常,record:{},targetRecord:{}",
                     JSONObject.toJSONString(currentRecord), JSONObject.toJSONString(targetRecord), e);
