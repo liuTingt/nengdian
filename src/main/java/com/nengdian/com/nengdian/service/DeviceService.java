@@ -114,6 +114,7 @@ public class DeviceService {
                     long count = userDeviceRepository.countByOpenid(device.getOpenid());
                     device.setDevName("水箱"+ ++count);
                 }
+                device.setOpenid(null);
                 logger.info("save data:{}", JSONObject.toJSON(device));
                 result = deviceRepository.save(device);
             } else {
@@ -164,6 +165,16 @@ public class DeviceService {
             return true;
         } catch (Exception e) {
             logger.error("delete device error", e);
+        }
+        return false;
+    }
+
+    public boolean deleteByDevId(String devId) {
+        try {
+            userDeviceRepository.deleteUserDeviceByDevId(devId);
+            return true;
+        } catch (Exception e) {
+            logger.error("delete device error, devId:{}", devId, e);
         }
         return false;
     }
