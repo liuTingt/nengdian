@@ -25,7 +25,6 @@ public class Device {
     /**
      * 微信用户openid
      */
-    @NotEmpty(message = "用户ID不能为空")
     private String openid;
     /**
      * 设备名称
