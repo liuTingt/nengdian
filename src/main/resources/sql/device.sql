@@ -1,6 +1,6 @@
 CREATE TABLE `device` (
 `dev_id` varchar(64) NOT NULL COMMENT '设备编码',
-`openid` varchar(64) NOT NULL COMMENT '微信用户openid',
+`openid` varchar(64) default NULL COMMENT '微信用户openid',
 `dev_name` varchar(64) NOT NULL COMMENT '设备名称',
 `type` tinyint(1) NOT NULL COMMENT '设备类型 1：太阳能款 2:：插电款',
 `install_height` int NOT NULL COMMENT '安装高度 单位：厘米 范围0.1~2.9米之间',
