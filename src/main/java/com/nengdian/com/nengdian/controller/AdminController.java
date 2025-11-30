@@ -15,7 +15,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,10 +51,10 @@ public class AdminController {
                 result = deviceService.pageList(request, devIds);
             } else {
                 result = deviceService.pageList(request, devIds);
-                List<String> deviceIds = result.getContent().stream().map(Device::getDevId).collect(Collectors.toList());
-                userDevices = userDeviceRepository.findByDevIds(deviceIds);
+//                List<String> deviceIds = result.getContent().stream().map(Device::getDevId).collect(Collectors.toList());
+//                userDevices = userDeviceRepository.findByDevIds(deviceIds);
             }
-            assignUser(result, userDevices);
+//            assignUser(result, userDevices);
             return ResultResponse.success(new DevicePageVO(result.getTotalElements(), result.getContent()));
         } catch (BizException e) {
             logger.error("pageList biz error, request:{}", JSONObject.toJSONString(request), e);
