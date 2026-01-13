@@ -41,19 +41,19 @@ public class Device {
      * 单位：厘米
      * 范围0.1~2.9米之间
      */
-    private Integer installHeight = 120;
+    private Integer installHeight = 290;
     /**
      * 传感器满液位距离
      * 单位：厘米
      * 范围最低0.1米
      */
-    private Integer distance = 20;
+    private Integer distance = 10;
     /**
      * 上限设置
      * 单位：百分比值，10%，存储10
      * 范围10～100
      */
-    private Integer upperLimit = 80;
+    private Integer upperLimit = 90;
     /**
      * 下限设置
      * 范围0～90

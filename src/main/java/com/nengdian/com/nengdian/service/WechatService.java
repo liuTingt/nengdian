@@ -58,7 +58,7 @@ public class WechatService {
     private UserService userService;
 
     public Cache<String, String> cache = CacheBuilder.newBuilder()
-            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .expireAfterWrite(3, TimeUnit.MINUTES)
             .maximumSize(100)
             .removalListener(removalNotification -> {
                 logger.info("cache remove reason:{}", removalNotification.getCause());

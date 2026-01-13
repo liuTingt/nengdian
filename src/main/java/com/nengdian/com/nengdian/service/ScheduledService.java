@@ -36,7 +36,7 @@ public class ScheduledService {
                 if (!record.isOffline()) {
                     continue;
                 }
-
+                // 更新设备状态，用于提醒
                 if (!LiquidStatusEnum.Offline.getCode().equals(record.getLiquidStatus())) {
                     deviceRecordRepository.offline(record.getDevId());
                 }

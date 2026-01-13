@@ -25,7 +25,7 @@ public class RecordBO {
      * 高液位报警设置参数
      */
     @JSONField(name = "SX")
-    private String SX;
+    private int SX;
 
     /**
      * 高液位报警设置参数
@@ -66,11 +66,11 @@ public class RecordBO {
         this.WS = WS;
     }
 
-    public String getSX() {
+    public int getSX() {
         return SX;
     }
 
-    public void setSX(String SX) {
+    public void setSX(int SX) {
         this.SX = SX;
     }
 

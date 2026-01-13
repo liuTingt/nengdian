@@ -6,6 +6,8 @@ import com.nengdian.com.nengdian.bo.RecordBO;
 import com.nengdian.com.nengdian.common.BizException;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
+import com.nengdian.com.nengdian.dao.DeviceRepository;
+import com.nengdian.com.nengdian.entity.Device;
 import com.nengdian.com.nengdian.entity.DeviceRecord;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ public class MqttConsumer {
     private DeviceRecordRepository recordRepository;
     @Resource
     private AlterNotifyService alterNotifyService;
+    @Resource
+    private DeviceRepository deviceRepository;
 
 
     public void consumer(Message message) {
@@ -46,11 +50,13 @@ public class MqttConsumer {
             if (!isLegal(devId, message)) {
                 return;
             }
-
             RecordBO recordBO = JSONObject.parseObject(message.getPayload().toString(), RecordBO.class);
             long startTime = System.currentTimeMillis();
 
             logger.info("处理MQTT消息,devId:{},record:{}", devId, JSONObject.toJSON(recordBO));
+
+            updateDeviceSetting(devId, recordBO);
+
             DeviceRecord currentRecord = recordRepository.findDeviceRecordByDevId(devId);
 
             DeviceRecord targetRecord = buildRecord(currentRecord, recordBO, devId);
@@ -69,6 +75,28 @@ public class MqttConsumer {
         }
     }
 
+    private void updateDeviceSetting(String devId, RecordBO recordBO) {
+        try {
+            Device device = deviceRepository.findByDevId(devId);
+
+            int distance = (int) Math.round(recordBO.getF() * 100L);
+            int installHeight = (int) Math.round(recordBO.getI() * 100L);
+
+            if (!device.getUpperLimit().equals(recordBO.getSX()) ||
+                    !device.getLowerLimit().equals(recordBO.getXX()) ||
+                    !device.getDistance().equals(distance) ||
+                    !device.getInstallHeight().equals(installHeight)) {
+                device.setUpperLimit(recordBO.getSX());
+                device.setLowerLimit(recordBO.getXX());
+                device.setDistance(distance);
+                device.setInstallHeight(installHeight);
+
+                deviceRepository.save(device);
+            }
+        } catch (Exception e) {
+            logger.error("更新设备参数异常", e);
+        }
+    }
     private boolean isLegal(String devId, Message message) {
         String payload = message.getPayload().toString();
         if (Strings.isBlank(payload) || stringPayload.equals(payload)) {

@@ -114,7 +114,6 @@ public class DeviceService {
                     long count = userDeviceRepository.countByOpenid(device.getOpenid());
                     device.setDevName("水箱"+ ++count);
                 }
-                device.setOpenid(null);
                 logger.info("save data:{}", JSONObject.toJSON(device));
                 result = deviceRepository.save(device);
             } else {

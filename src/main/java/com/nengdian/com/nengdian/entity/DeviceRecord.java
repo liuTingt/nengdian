@@ -91,7 +91,7 @@ public class DeviceRecord {
     }
 
     public boolean isOffline() {
-        LocalDateTime offlineTime = this.createTime.plusMinutes(2);
+        LocalDateTime offlineTime = this.createTime.plusMinutes(9);
         return LocalDateTime.now().isAfter(offlineTime);
     }
 
