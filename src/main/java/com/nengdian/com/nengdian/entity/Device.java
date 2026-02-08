@@ -66,9 +66,14 @@ public class Device {
     private boolean lowEnergySwitch = true;
 
     /**
-     * 排水模式
+     * 排水模式 插电款专用
      */
     private boolean drainageModel = true;
+
+    /**
+     * 太阳能款 检测周期
+     */
+    private Integer checkPeriod;
 
     /**
      * 删除状态 0：未删除  1：已删除
@@ -185,5 +190,13 @@ public class Device {
 
     public void setDrainageModel(boolean drainageModel) {
         this.drainageModel = drainageModel;
+    }
+
+    public Integer getCheckPeriod() {
+        return checkPeriod;
+    }
+
+    public void setCheckPeriod(Integer checkPeriod) {
+        this.checkPeriod = checkPeriod;
     }
 }

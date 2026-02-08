@@ -7,6 +7,7 @@ import com.nengdian.com.nengdian.ao.QueryDeviceAO;
 import com.nengdian.com.nengdian.ao.QueryDevicePageAO;
 import com.nengdian.com.nengdian.ao.SettingAO;
 import com.nengdian.com.nengdian.common.BizException;
+import com.nengdian.com.nengdian.common.DeviceTypeEnum;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.common.ResultCodeEnum;
 import com.nengdian.com.nengdian.controller.UserController;
@@ -192,7 +193,11 @@ public class DeviceService {
         currentDevice.setUpperLimit(request.getUpperLimit());
         currentDevice.setLowerLimit(request.getLowerLimit());
         currentDevice.setLowEnergySwitch(request.isLowEnergySwitch());
-        currentDevice.setDrainageModel(request.isDrainageModel());
+        if (request.getType().equals(DeviceTypeEnum.SOLAR_ENERGY.getType())) {
+            currentDevice.setCheckPeriod(request.getCheckPeriod());
+        } else {
+            currentDevice.setDrainageModel(request.isDrainageModel());
+        }
         currentDevice.setModifyTime(new Date());
         Device result = deviceRepository.save(currentDevice);
 
@@ -251,6 +256,8 @@ public class DeviceService {
                 DeviceDetailVO vo = new DeviceDetailVO(device);
                 vo.setLiquidPercent(record.getLiquidPercent());
                 vo.setStatus(record.getStatus());
+                vo.setPowerLevel(record.getPowerLevel());
+                vo.setStart(record.getStart());
                 result.add(vo);
             }
         }
@@ -290,10 +297,12 @@ public class DeviceService {
         DeviceLiquidLevelVO result = new DeviceLiquidLevelVO();
         result.setDevId(device.getDevId());
         result.setDevName(device.getDevName());
+        result.setType(device.getType());
         result.setLiquidHeight(records.get(0).getLiquidHeight());
         result.setLiquidPercent(records.get(0).getLiquidPercent());
         result.setLiquidStatus(records.get(0).getLiquidStatus());
         result.setStatus(records.get(0).getStatus());
+        result.setPowerLevel(records.get(0).getPowerLevel());
         return result;
     }
 

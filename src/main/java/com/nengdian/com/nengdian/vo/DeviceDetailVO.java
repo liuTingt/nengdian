@@ -13,6 +13,14 @@ public class DeviceDetailVO extends Device {
      * 设备状态
      */
     private String status;
+    /**
+     * 太阳能款 电量
+     */
+    private Double powerLevel;
+    /**
+     * 太阳能款 插电时长
+     */
+    private Integer start;
 
 
     public Integer getLiquidPercent() {
@@ -29,6 +37,22 @@ public class DeviceDetailVO extends Device {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Double getPowerLevel() {
+        return powerLevel;
+    }
+
+    public void setPowerLevel(Double powerLevel) {
+        this.powerLevel = powerLevel;
+    }
+
+    public Integer getStart() {
+        return start;
+    }
+
+    public void setStart(Integer start) {
+        this.start = start;
     }
 
     public DeviceDetailVO() {

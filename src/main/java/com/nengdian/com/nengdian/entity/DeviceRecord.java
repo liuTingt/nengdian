@@ -1,6 +1,7 @@
 package com.nengdian.com.nengdian.entity;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -35,6 +36,22 @@ public class DeviceRecord {
      * 0 正常， 1，低液位报警， 2，高液位报警，3 离线
      */
     private Integer liquidStatus;
+
+    /**
+     * 设备类型
+     */
+    private Integer type;
+
+    /**
+     * 太阳能款 太阳能电量
+     */
+    private Double powerLevel;
+
+    /**
+     * 太阳能款 插电时长 单位：分钟
+     */
+    private Integer start;
+
     /**
      * 创建时间
      */
@@ -96,9 +113,30 @@ public class DeviceRecord {
     }
 
     public String getStatus() {
-//        if (isOffline()) {
-//            return "离线";
-//        }
         return LiquidStatusEnum.getStatusDesc(this.getLiquidStatus());
+    }
+
+    public Double getPowerLevel() {
+        return powerLevel;
+    }
+
+    public void setPowerLevel(Double powerLevel) {
+        this.powerLevel = powerLevel;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getStart() {
+        return start;
+    }
+
+    public void setStart(Integer start) {
+        this.start = start;
     }
 }

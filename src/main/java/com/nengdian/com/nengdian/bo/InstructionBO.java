@@ -62,6 +62,12 @@ public class InstructionBO {
     @JSONField(name = "W")
     private double W = -1;
 
+    /**
+     * 太阳能款，检测周期
+     */
+    @JSONField(name = "U")
+    private int U = 0;
+
     public double getSX() {
         return SX;
     }
@@ -132,5 +138,13 @@ public class InstructionBO {
 
     public void setW(double w) {
         W = w;
+    }
+
+    public int getU() {
+        return U;
+    }
+
+    public void setU(int u) {
+        U = u;
     }
 }

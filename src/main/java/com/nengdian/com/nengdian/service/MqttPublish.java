@@ -3,6 +3,7 @@ package com.nengdian.com.nengdian.service;
 import com.alibaba.fastjson.JSONObject;
 import com.nengdian.com.nengdian.bo.InstructionBO;
 import com.nengdian.com.nengdian.ao.SettingAO;
+import com.nengdian.com.nengdian.common.DeviceTypeEnum;
 import com.nengdian.com.nengdian.mq.MqttGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,11 @@ public class MqttPublish {
         instruction.setI((double) request.getInstallHeight()/100);
         instruction.setF((double) request.getDistance()/100);
         instruction.setPump(0);
-        if (request.isDrainageModel()) {
+        if (request.getType().equals(DeviceTypeEnum.ELECTRIC.getType()) && request.isDrainageModel()) {
             instruction.setPump(1);
+        }
+        if (request.getType().equals(DeviceTypeEnum.SOLAR_ENERGY.getType())) {
+            instruction.setU(request.getCheckPeriod());
         }
 //        instruction.setSize(0);
 //        instruction.setL(0.0D);

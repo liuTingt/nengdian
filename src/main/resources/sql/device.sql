@@ -17,6 +17,7 @@ INDEX idx_openid(`openid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 alter table device add COLUMN drainage_model tinyint(1) NOT NULL default 1 COMMENT '排水模式';
+alter table device add COLUMN check_period int(11) DEFAULT NULL COMMENT '太阳能款 检测周期';
 
 CREATE TABLE `device_record` (
 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键',
@@ -29,6 +30,9 @@ PRIMARY KEY (`id`),
 INDEX idx_dev_id(`dev_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+ALTER TABLE device_record ADD COLUMN power_level DECIMAL(7, 4) DEFAULT NULL COMMENT '太阳能款 电量';
+ALTER TABLE device_record ADD COLUMN type tinyint(1) NOT NULL COMMENT '设备类型 1：太阳能款 2:插电款';
+alter table device_record add COLUMN start int(11) DEFAULT NULL COMMENT '太阳能款 插电时长,单位:分钟';
 
 CREATE TABLE `user` (
 `openid` varchar(64) NOT NULL COMMENT '微信小程序用户openid',

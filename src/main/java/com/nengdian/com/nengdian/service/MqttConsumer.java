@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.nengdian.com.nengdian.bo.RecordBO;
 import com.nengdian.com.nengdian.common.BizException;
+import com.nengdian.com.nengdian.common.DeviceTypeEnum;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.dao.DeviceRepository;
@@ -85,11 +86,13 @@ public class MqttConsumer {
             if (!device.getUpperLimit().equals(recordBO.getSX()) ||
                     !device.getLowerLimit().equals(recordBO.getXX()) ||
                     !device.getDistance().equals(distance) ||
-                    !device.getInstallHeight().equals(installHeight)) {
+                    !device.getInstallHeight().equals(installHeight) ||
+                    isSunUpdate(device, recordBO)) {
                 device.setUpperLimit(recordBO.getSX());
                 device.setLowerLimit(recordBO.getXX());
                 device.setDistance(distance);
                 device.setInstallHeight(installHeight);
+                device.setCheckPeriod(recordBO.getU());
 
                 deviceRepository.save(device);
             }
@@ -118,6 +121,7 @@ public class MqttConsumer {
 
     private DeviceRecord buildRecord(DeviceRecord currentRecord, RecordBO recordBO, String devId) {
         DeviceRecord record = new DeviceRecord();
+        record.setType(DeviceTypeEnum.ELECTRIC.getType());
         record.setDevId(devId);
         record.setLiquidHeight((int) (recordBO.getX() * 100));
 
@@ -128,7 +132,16 @@ public class MqttConsumer {
         if (Objects.nonNull(currentRecord)) {
             record.setId(currentRecord.getId());
         }
+        // 太阳能款，设置电量
+        if (Objects.nonNull(recordBO.getB())) {
+            record.setType(DeviceTypeEnum.SOLAR_ENERGY.getType());
+            record.setPowerLevel(recordBO.getB());
+            record.setStart(recordBO.getStart());
+        }
         return record;
     }
 
+    private boolean isSunUpdate(Device device, RecordBO recordBO) {
+        return device.getType().equals(DeviceTypeEnum.SOLAR_ENERGY.getType()) && !device.getCheckPeriod().equals(recordBO.getU());
+    }
 }

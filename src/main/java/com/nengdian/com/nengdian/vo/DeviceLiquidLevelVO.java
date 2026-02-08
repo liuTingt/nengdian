@@ -27,6 +27,14 @@ public class DeviceLiquidLevelVO {
      * 设备液位状态
      */
     private String status;
+    /**
+     * 设备类型
+     */
+    private Integer type;
+    /**
+     * 太阳能款 电量
+     */
+    private Double powerLevel;
 
     public String getDevId() {
         return devId;
@@ -74,5 +82,21 @@ public class DeviceLiquidLevelVO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Double getPowerLevel() {
+        return powerLevel;
+    }
+
+    public void setPowerLevel(Double powerLevel) {
+        this.powerLevel = powerLevel;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

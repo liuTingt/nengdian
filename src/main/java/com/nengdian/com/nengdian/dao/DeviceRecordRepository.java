@@ -33,4 +33,6 @@ public interface DeviceRecordRepository extends JpaRepository<DeviceRecord, Long
     @Query("update DeviceRecord d set d.liquidStatus = 3 where d.devId = :devId")
     int offline(@Param("devId") String devId);
 
+    List<DeviceRecord> findByType(@Param("type") Integer type);
+
 }

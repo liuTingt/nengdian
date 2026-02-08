@@ -1,5 +1,6 @@
 package com.nengdian.com.nengdian.service;
 
+import com.nengdian.com.nengdian.common.DeviceTypeEnum;
 import com.nengdian.com.nengdian.common.LiquidStatusEnum;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.entity.DeviceRecord;
@@ -31,7 +32,7 @@ public class ScheduledService {
             StopWatch stopWatch = new StopWatch("crone");
             stopWatch.start("task");
 
-            List<DeviceRecord> recordList = deviceRecordRepository.findAll();
+            List<DeviceRecord> recordList = deviceRecordRepository.findByType(DeviceTypeEnum.ELECTRIC.getType());
             for (DeviceRecord record: recordList) {
                 if (!record.isOffline()) {
                     continue;

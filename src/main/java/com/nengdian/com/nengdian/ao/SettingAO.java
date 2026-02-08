@@ -70,6 +70,10 @@ public class SettingAO {
      * 0:关   1:开
      */
     private boolean remindSwitch;
+    /**
+     * 太阳能款 检测周期
+     */
+    private Integer checkPeriod;
 
     public String getDevId() {
         return devId;
@@ -165,5 +169,13 @@ public class SettingAO {
 
     public void setRemindSwitch(boolean remindSwitch) {
         this.remindSwitch = remindSwitch;
+    }
+
+    public Integer getCheckPeriod() {
+        return checkPeriod;
+    }
+
+    public void setCheckPeriod(Integer checkPeriod) {
+        this.checkPeriod = checkPeriod;
     }
 }
