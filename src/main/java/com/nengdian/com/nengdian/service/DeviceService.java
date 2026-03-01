@@ -392,6 +392,7 @@ public class DeviceService {
         deviceDetail.setDrainageModel(device.isDrainageModel());
         deviceDetail.setLanguage(user.getLanguage());
         deviceDetail.setRemindSwitch(user.isRemindSwitch());
+        deviceDetail.setCheckPeriod(device.getCheckPeriod());
         return deviceDetail;
     }
 

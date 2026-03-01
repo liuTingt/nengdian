@@ -62,6 +62,8 @@ public class DeviceSettingVO {
      */
     private boolean remindSwitch;
 
+    private Integer checkPeriod;
+
     public String getDevId() {
         return devId;
     }
@@ -156,5 +158,13 @@ public class DeviceSettingVO {
 
     public void setDrainageModel(boolean drainageModel) {
         this.drainageModel = drainageModel;
+    }
+
+    public Integer getCheckPeriod() {
+        return checkPeriod;
+    }
+
+    public void setCheckPeriod(Integer checkPeriod) {
+        this.checkPeriod = checkPeriod;
     }
 }
