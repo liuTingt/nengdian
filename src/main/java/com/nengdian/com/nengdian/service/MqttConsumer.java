@@ -138,6 +138,8 @@ public class MqttConsumer {
             record.setPowerLevel(recordBO.getB());
             record.setStart(recordBO.getStart());
         }
+
+        record.setDevSignal(Objects.isNull(recordBO.getSignal()) ?  "0" : recordBO.getSignal());
         return record;
     }
 

@@ -66,6 +66,12 @@ public class RecordBO {
     @JSONField(name = "start")
     private Integer start;
 
+    /**
+     * 插电款 信号强度
+     */
+    @JSONField(name = "signal")
+    private String signal;
+
     public double getX() {
         return X;
     }
@@ -160,5 +166,13 @@ public class RecordBO {
 
     public void setStart(Integer start) {
         this.start = start;
+    }
+
+    public String getSignal() {
+        return signal;
+    }
+
+    public void setSignal(String signal) {
+        this.signal = signal;
     }
 }

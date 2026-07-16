@@ -53,6 +53,11 @@ public class DeviceRecord {
     private Integer start;
 
     /**
+     * 插电款 信号强度
+     */
+    private String devSignal;
+
+    /**
      * 创建时间
      */
     @CreatedDate
@@ -138,5 +143,13 @@ public class DeviceRecord {
 
     public void setStart(Integer start) {
         this.start = start;
+    }
+
+    public String getDevSignal() {
+        return devSignal;
+    }
+
+    public void setDevSignal(String devSignal) {
+        this.devSignal = devSignal;
     }
 }

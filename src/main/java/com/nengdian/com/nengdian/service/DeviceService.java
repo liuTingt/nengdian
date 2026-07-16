@@ -303,6 +303,8 @@ public class DeviceService {
         result.setLiquidStatus(records.get(0).getLiquidStatus());
         result.setStatus(records.get(0).getStatus());
         result.setPowerLevel(records.get(0).getPowerLevel());
+        result.setSignal(records.get(0).getDevSignal());
+        result.setStart(records.get(0).getStart());
         return result;
     }
 

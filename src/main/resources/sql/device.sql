@@ -33,6 +33,7 @@ INDEX idx_dev_id(`dev_id`)
 ALTER TABLE device_record ADD COLUMN power_level DECIMAL(7, 4) DEFAULT NULL COMMENT '太阳能款 电量';
 ALTER TABLE device_record ADD COLUMN type tinyint(1) NOT NULL COMMENT '设备类型 1：太阳能款 2:插电款';
 alter table device_record add COLUMN start int(11) DEFAULT NULL COMMENT '太阳能款 插电时长,单位:分钟';
+alter table device_record add COLUMN dev_signal varchar(32) DEFAULT '0' COMMENT '插电款 信号强度';
 
 CREATE TABLE `user` (
 `openid` varchar(64) NOT NULL COMMENT '微信小程序用户openid',

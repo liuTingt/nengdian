@@ -36,6 +36,15 @@ public class DeviceLiquidLevelVO {
      */
     private Double powerLevel;
 
+    /**
+     * 插电款 信号强度
+     */
+    private String signal;
+    /**
+     * 太阳能款 插电时长
+     */
+    private Integer start;
+
     public String getDevId() {
         return devId;
     }
@@ -98,5 +107,21 @@ public class DeviceLiquidLevelVO {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getSignal() {
+        return signal;
+    }
+
+    public void setSignal(String signal) {
+        this.signal = signal;
+    }
+
+    public Integer getStart() {
+        return start;
+    }
+
+    public void setStart(Integer start) {
+        this.start = start;
     }
 }
