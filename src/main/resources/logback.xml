@@ -12,17 +12,17 @@
     <property name="LOG_FORMAT_TWO" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{36}:%line %msg%n" />
 
     <!-- 输出到控制台 -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- 日志输出编码格式化 -->
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>${LOG_FORMAT_ONE}</Pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-        <!-- 过滤器，此过滤器低于阈值的不再显示 -->
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
-        </filter>
-    </appender>
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        &lt;!&ndash; 日志输出编码格式化 &ndash;&gt;-->
+<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+<!--            <Pattern>${LOG_FORMAT_ONE}</Pattern>-->
+<!--            <charset>UTF-8</charset>-->
+<!--        </encoder>-->
+<!--        &lt;!&ndash; 过滤器，此过滤器低于阈值的不再显示 &ndash;&gt;-->
+<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+<!--            <level>info</level>-->
+<!--        </filter>-->
+<!--    </appender>-->
 
     <!-- 时间日期滚动日志 -->
     <appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -98,7 +98,7 @@
 
     <!-- 指定输出的日志等级，root代表工程所有包 -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+<!--        <appender-ref ref="CONSOLE" />-->
         <appender-ref ref="FILE_INFO" />
         <appender-ref ref="FILE_ERROR" />
         <appender-ref ref="FILE_WARN" />
@@ -107,7 +107,7 @@
     <!-- 指定输出的日志等级，指定包路径，此包下都以设置的等级输出 -->
     <!-- additivity表示日志是否向上传递，如果为true，日志在root可能会再次打印 -->
     <logger name="com.banmoon.spring_boot_logger.mapper" level="DEBUG" additivity="false">
-        <appender-ref ref="CONSOLE" />
+<!--        <appender-ref ref="CONSOLE" />-->
         <appender-ref ref="FILE_INFO" />
         <appender-ref ref="FILE_ERROR" />
         <appender-ref ref="FILE_WARN" />
