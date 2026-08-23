@@ -44,6 +44,10 @@ public class DeviceLiquidLevelVO {
      * 太阳能款 插电时长
      */
     private Integer start;
+    /**
+     * 距离上次更新时长
+     */
+    private String timeSinceLastUpdate;
 
     public String getDevId() {
         return devId;
@@ -123,5 +127,13 @@ public class DeviceLiquidLevelVO {
 
     public void setStart(Integer start) {
         this.start = start;
+    }
+
+    public String getTimeSinceLastUpdate() {
+        return timeSinceLastUpdate;
+    }
+
+    public void setTimeSinceLastUpdate(String timeSinceLastUpdate) {
+        this.timeSinceLastUpdate = timeSinceLastUpdate;
     }
 }

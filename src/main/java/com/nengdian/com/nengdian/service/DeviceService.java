@@ -6,10 +6,7 @@ import com.google.common.collect.Sets;
 import com.nengdian.com.nengdian.ao.QueryDeviceAO;
 import com.nengdian.com.nengdian.ao.QueryDevicePageAO;
 import com.nengdian.com.nengdian.ao.SettingAO;
-import com.nengdian.com.nengdian.common.BizException;
-import com.nengdian.com.nengdian.common.DeviceTypeEnum;
-import com.nengdian.com.nengdian.common.LiquidStatusEnum;
-import com.nengdian.com.nengdian.common.ResultCodeEnum;
+import com.nengdian.com.nengdian.common.*;
 import com.nengdian.com.nengdian.controller.UserController;
 import com.nengdian.com.nengdian.dao.DeviceRecordRepository;
 import com.nengdian.com.nengdian.dao.DeviceRepository;
@@ -305,6 +302,7 @@ public class DeviceService {
         result.setPowerLevel(records.get(0).getPowerLevel());
         result.setSignal(records.get(0).getDevSignal());
         result.setStart(records.get(0).getStart());
+        result.setTimeSinceLastUpdate(TimeUtils.formatTimeAgo(records.get(0).getCreateTime()));
         return result;
     }
 
