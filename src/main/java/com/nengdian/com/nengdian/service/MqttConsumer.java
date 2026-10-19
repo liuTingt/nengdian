@@ -65,7 +65,7 @@ public class MqttConsumer {
 
             long time2 = System.currentTimeMillis();
             if (recordBO.getWS() == LiquidStatusEnum.Low.getCode() || recordBO.getWS() == LiquidStatusEnum.Height.getCode()) {
-                alterNotifyService.alertNotify(currentRecord, targetRecord);
+                alterNotifyService.alertNotifyAsync(currentRecord, targetRecord);
             }
             long endTime = System.currentTimeMillis();
             logger.info("处理MQTT消息耗时,查库耗时：{}，处理消息耗时：{}，总耗时:{}", (time2 - startTime), (endTime - time2), (endTime - startTime));

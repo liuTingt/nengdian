@@ -48,7 +48,7 @@ public class MqttConfig {
         mqttConnectOptions.setAutomaticReconnect(true);      // 启用自动重连
         mqttConnectOptions.setMaxReconnectDelay(30000);     // 最大重连延迟30秒
         mqttConnectOptions.setConnectionTimeout(60);        // 连接超时30秒
-        mqttConnectOptions.setCleanSession(true);          // 保持会话状态
+        mqttConnectOptions.setCleanSession(false);          // 保持会话状态
         mqttConnectOptions.setMaxInflight(5); // 调整并发消息数量
         return mqttConnectOptions;
     }
@@ -89,10 +89,10 @@ public class MqttConfig {
 
     @Bean
     public MessageProducer inbound(MqttPahoClientFactory mqttClientFactory) {
-        String clientId = "stable-client-" + System.currentTimeMillis();
+//        String clientId = "stable-client-" + System.currentTimeMillis();
         MqttPahoMessageDrivenChannelAdapter adapter =
                 new MqttPahoMessageDrivenChannelAdapter(
-                        clientId,
+                        inClientId,
                         mqttClientFactory,
                         "+/service/post"); // 订阅主题通配符 +来表示单一层级。#：多层级
         adapter.setCompletionTimeout(10000);//设置完成超时为10秒

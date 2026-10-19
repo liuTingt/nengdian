@@ -13,6 +13,7 @@ import com.nengdian.com.nengdian.entity.NotifyRecord;
 import com.nengdian.com.nengdian.entity.UserDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,6 +40,13 @@ public class AlterNotifyService {
     @Resource
     private WechatService wechatService;
 
+
+    @Async("alertNotifyExecutor")
+    public void alertNotifyAsync(DeviceRecord currentRecord, DeviceRecord targetRecord) {
+        long startTime = System.currentTimeMillis();
+        alertNotify(currentRecord, targetRecord);
+        logger.info("告警通知异步处理完成，devId：{}，耗时：{}", targetRecord.getDevId(), System.currentTimeMillis() - startTime);
+    }
 
     public void alertNotify(DeviceRecord currentRecord, DeviceRecord targetRecord) {
         try {
