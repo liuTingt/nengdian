@@ -45,7 +45,7 @@ public class MqttConfig {
         mqttConnectOptions.setServerURIs(new String[]{host});
         mqttConnectOptions.setKeepAliveInterval(60);
 
-        mqttConnectOptions.setAutomaticReconnect(true);      // 启用自动重连
+        mqttConnectOptions.setAutomaticReconnect(false);      // 启用自动重连
         mqttConnectOptions.setMaxReconnectDelay(30000);     // 最大重连延迟30秒
         mqttConnectOptions.setConnectionTimeout(60);        // 连接超时30秒
         mqttConnectOptions.setCleanSession(true);          // 保持会话状态
